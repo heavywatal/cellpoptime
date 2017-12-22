@@ -1,25 +1,18 @@
 library(tidyverse)
 library(wtl)
-library(ape)
 library(ggtree)
+loadNamespace('cowplot')
 
-results = ms(6L, 5L, theta=100) %>% print()
+samples = ms(6L, 4L, theta=100) %>% print()
 
-.m = results[[1]] %>% as_int_matrix() %>% add_outgroup()
-.d = .m %>% dist(method='manhattan') %>% print()
-.tree = .d %>% ape::fastme.bal()
-.rooted = .tree %>% ape::root('0')
+trees = samples %>% purrr::map(infer_rooted_tree) %>% print()
 
-attributes(.rooted)
-str(.rooted)
-.rooted$edge
-.rooted$edge.length
-.rooted$tip.label
-.rooted$Nnode
+.plts = purrr::map(trees, ~{
+    as.phylo(.x) %>%
+    ggplot(aes(x, y))+
+    geom_tree()+
+    geom_tiplab()+
+    theme_bw()
+})
 
-.rooted %>% plot()
-
-ggplot(.rooted, aes(x, y))+
-geom_tree()+
-geom_tiplab()+
-theme_tree()
+cowplot::plot_grid(plotlist=.plts, ncol=2L)

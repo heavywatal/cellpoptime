@@ -8,7 +8,14 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: tidyverse
-Imports: dplyr, magrittr, purrr, stringr, tidyr
+Imports:
+  ape,
+  dplyr,
+  magrittr,
+  purrr,
+  stringr,
+  tidyr,
+  tidytree
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
 RoxygenNote: 6.0.1
