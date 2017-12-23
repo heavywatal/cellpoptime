@@ -2,16 +2,25 @@
 % Please edit documentation in R/tree.R
 \name{infer_rooted_tree}
 \alias{infer_rooted_tree}
+\alias{as.phylo.data.frame}
 \title{Infer rooted tree of sampled genotypes}
 \usage{
 infer_rooted_tree(genotypes)
+
+\method{as.phylo}{data.frame}(x)
 }
 \arguments{
 \item{genotypes}{string vector}
+
+\item{x}{tbl}
 }
 \value{
 tibble
+
+phylo
 }
 \description{
 Infer rooted tree of sampled genotypes
+
+Take normal data.frame as tbl_tree for simplicity
 }

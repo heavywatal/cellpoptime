@@ -12,3 +12,15 @@ infer_rooted_tree = function(genotypes) {
     ape::root('0') %>%
     tidytree::as_data_frame()
 }
+
+#' Take normal data.frame as tbl_tree for simplicity
+#' @importFrom ape as.phylo
+#' @method as.phylo data.frame
+#' @param x tbl
+#' @return phylo
+#' @rdname tree
+#' @export
+as.phylo.data.frame = function(x) {
+    class(x) = c('tbl_tree', class(x))
+    tidytree::as.phylo(x)
+}
