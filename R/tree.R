@@ -2,6 +2,7 @@
 #' @param genotypes string vector
 #' @return tibble
 #' @rdname tree
+#' @export
 infer_rooted_tree = function(genotypes) {
     genotypes %>%
     as_int_matrix() %>%
