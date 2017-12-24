@@ -4,12 +4,12 @@
 #' @rdname tree
 #' @export
 infer_rooted_tree = function(genotypes) {
-    genotypes %>%
+  genotypes %>%
     as_int_matrix() %>%
     add_outgroup() %>%
-    stats::dist(method='manhattan') %>%
+    stats::dist(method = "manhattan") %>%
     ape::fastme.bal() %>%
-    ape::root('0') %>%
+    ape::root("0") %>%
     tidytree::as_data_frame()
 }
 
@@ -21,6 +21,6 @@ infer_rooted_tree = function(genotypes) {
 #' @rdname tree
 #' @export
 as.phylo.data.frame = function(x) {
-    class(x) = c('tbl_tree', class(x))
-    tidytree::as.phylo(x)
+  class(x) = c("tbl_tree", class(x))
+  tidytree::as.phylo(x)
 }

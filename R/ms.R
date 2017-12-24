@@ -6,8 +6,8 @@
 #' @rdname ms
 #' @export
 ms = function(nsam=4L, nreps=2L, theta=5.0) {
-    cmd = paste('ms', nsam, nreps, '-t', theta)
-    system(cmd, intern=TRUE, ignore.stderr=TRUE) %>%
+  cmd = paste("ms", nsam, nreps, "-t", theta)
+  system(cmd, intern = TRUE, ignore.stderr = TRUE) %>%
     parse_ms()
 }
 
@@ -16,10 +16,10 @@ ms = function(nsam=4L, nreps=2L, theta=5.0) {
 #' @return list of string vector
 #' @rdname ms
 parse_ms = function(lines) {
-    mobj = stringr::str_match(lines[1L], '^ms\\s+(\\d+)\\s+(\\d+)')[1L, -1L]
-    nsam = as.integer(mobj[1L])
-    nreps = as.integer(mobj[2L])
-    utils::tail(lines, -2L) %>%
-    split(rep(seq_len(nreps), each=nsam + 4L)) %>%
+  mobj = stringr::str_match(lines[1L], "^ms\\s+(\\d+)\\s+(\\d+)")[1L, -1L]
+  nsam = as.integer(mobj[1L])
+  nreps = as.integer(mobj[2L])
+  utils::tail(lines, -2L) %>%
+    split(rep(seq_len(nreps), each = nsam + 4L)) %>%
     purrr::map(utils::tail, -4L)
 }
