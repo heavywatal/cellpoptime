@@ -2,6 +2,7 @@ library(tidyverse)
 library(wtl)
 library(ggtree)
 loadNamespace("cowplot")
+refresh('cellpoptime')
 
 samples = ms(6L, 4L, theta = 100) %>% print()
 
@@ -31,33 +32,46 @@ remove_dummy_root = function(x) {
 
 .base = trees[[1]] %>% remove_dummy_root() %>% print()
 
-.plot(.base)
 
-filter_tippairs = function(x) {
-  dplyr::group_by(x, parent) %>%
-    dplyr::filter(all(isTip)) %>%
-    dplyr::mutate(branch.length = min(branch.length))
-  # TODO: min is not enough
+nest_tippairs = function(x) {
+  paired = dplyr::filter(x, !is.na(branch.length)) %>%
+    dplyr::group_by(parent) %>%
+    dplyr::filter(all(isTip)) %>% print() %>%
+    dplyr::mutate(
+      branch.length = ifelse(branch.length > 0, min(branch.length + coalesce(term_length, 0)) * branch.length / (branch.length + coalesce(term_length, 0)), 0),
+      term_length = min(branch.length + coalesce(term_length, 0))) %>%
+    dplyr::ungroup() %>%
+    print()
+  nested = paired %>% tidyr::nest(-parent, -term_length, .key="children") %>% print()
+  x %>%
+    dplyr::filter(!node %in% paired$node) %>%
+    dplyr::left_join(nested, by=c(node="parent"), suffix=c("", ".y")) %>%
+    dplyr::mutate(isTip = isTip | node %in% nested$parent,
+      term_length = coalesce(term_length, term_length.y),
+      children = ifelse(purrr::map_lgl(children, is.null), children.y, children),
+      term_length.y = NULL, children.y = NULL)
+  #TODO: shrink children as well
 }
 
-filter_remaining = function(x, new_tips) {
-  dplyr::group_by(x, parent) %>%
-    dplyr::filter(!all(isTip)) %>%
-    dplyr::mutate(isTip = isTip | (node %in% new_tips))
+.nested = .base %>%
+  dplyr::mutate(mutations = branch.length, term_length=NA_real_, children=list(NULL)) %>%
+  nest_tippairs() %>% print() %>%
+  nest_tippairs() %>% print() %>%
+  nest_tippairs() %>% print()
+
+unnest_pairs = function(x) {
+  .nested = x %>% dplyr::transmute(parent=node, children) %>% dplyr::filter(purrr::map_lgl(children, ~!is.null(.x)))
+  bind_rows(
+    x %>% dplyr::mutate(children=list(NULL)),
+    .nested %>% tidyr::unnest()
+  )
 }
 
-shrink = function(x) {
-  tipinfo = dplyr::select(x, node, isTip)
-  done = dplyr::filter(x, is.na(branch.length))
-  x = dplyr::filter(x, !is.na(branch.length))
-  while (nrow(x) > 1L) {
-    done = bind_rows(done, filter_tippairs(x)) %>% print()
-    x = filter_remaining(x, done$parent) %>% print()
-  }
-  bind_rows(done, x) %>%
-    dplyr::select(-isTip) %>%
-    dplyr::left_join(tipinfo)
-}
+.shrunk = .nested %>%
+  unnest_pairs() %>% print() %>%
+  unnest_pairs() %>% print() %>%
+  unnest_pairs() %>% print() %>%
+  dplyr::select(-term_length, -children) %>%
+  print()
 
-.mod = shrink(.base) %>% print()
-.mod %>% .plot()
+cowplot::plot_grid(.base %>% .plot(), .shrunk %>% .plot(), ncol = 2L)
