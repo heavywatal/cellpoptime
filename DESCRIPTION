@@ -13,6 +13,7 @@ Imports:
   dplyr,
   magrittr,
   purrr,
+  rlang,
   stringr,
   tidyr,
   tidytree

@@ -2,4 +2,5 @@
 #' @docType package
 #' @name cellpoptime
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 NULL
