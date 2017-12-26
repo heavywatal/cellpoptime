@@ -75,17 +75,7 @@ nest_tippairs = function(x) {
       term_length.y = NULL, children.y = NULL)
 }
 
-.base = trees[[1]] %>% remove_dummy_root() %>% print()
-
-.nested = .base %>%
-  dplyr::arrange(parent) %>%
-  dplyr::mutate(mutations = branch.length, term_length=0, children=list(NULL)) %>%
-  nest_tippairs() %>% print() %>%
-  nest_tippairs() %>% print() %>%
-  nest_tippairs() %>% print() %>%
-  nest_tippairs() %>% print()
-
-unnest_pairs = function(x) {
+unnest_children = function(x) {
   .outer = x %>%
     dplyr::transmute(parent=node, children) %>%
     dplyr::filter(!purrr::map_lgl(children, is.null)) %>%
@@ -95,14 +85,29 @@ unnest_pairs = function(x) {
     dplyr::mutate(isTip = !is.na(label))
 }
 
-.shrunk = .nested %>%
-  unnest_pairs() %>% print() %>%
-  unnest_pairs() %>% print() %>%
-  unnest_pairs() %>% print() %>%
-  unnest_pairs() %>% print() %>%
-  dplyr::select(-term_length, -children) %>%
-  dplyr::arrange(node) %>%
-  print()
+rescale_branches = function(x) {
+  x = x %>%
+    dplyr::arrange(parent) %>%
+    dplyr::mutate(
+      mutations = branch.length,
+      branch.length = pmax(branch.length + 0.01),
+      term_length = 0,
+      children = list(NULL)
+    )
+  num_edges = nrow(x)
+  while (nrow(x) > 1L) {
+    x = nest_tippairs(x)
+  }
+  while (nrow(x) < num_edges) {
+    x = unnest_children(x)
+  }
+  x %>%
+    dplyr::select(-term_length, -children) %>%
+    dplyr::arrange(node)
+}
+
+.base = trees[[4]] %>% remove_dummy_root() %>% print()
+.shrunk = .base %>% rescale_branches() %>% print()
 
 cowplot::plot_grid(
   .base %>% .plot() + coord_cartesian(xlim = c(0, 400)),
