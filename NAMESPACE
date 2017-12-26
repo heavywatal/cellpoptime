@@ -3,6 +3,7 @@
 S3method(as.phylo,data.frame)
 export(add_outgroup)
 export(as_int_matrix)
+export(as_multiphylo)
 export(infer_rooted_tree)
 export(ms)
 export(remove_outgroup)

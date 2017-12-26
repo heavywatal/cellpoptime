@@ -25,6 +25,17 @@ as.phylo.data.frame = function(x) {
   tidytree::as.phylo(x)
 }
 
+#' Add class name
+#' @param tbls list of tbl
+#' @return multiPhylo
+#' @rdname tree
+#' @export
+as_multiphylo = function(tbls) {
+  tbls = purrr::map(tbls, as.phylo)
+  class(tbls) = c("multiPhylo", class(tbls))
+  tbls
+}
+
 #' Remove dummy outgroup
 #' @return tibble
 #' @rdname tree

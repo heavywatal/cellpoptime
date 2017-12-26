@@ -3,6 +3,7 @@
 \name{infer_rooted_tree}
 \alias{infer_rooted_tree}
 \alias{as.phylo.data.frame}
+\alias{as_multiphylo}
 \alias{remove_outgroup}
 \alias{rescale_children}
 \title{Infer rooted tree of sampled genotypes}
@@ -10,6 +11,8 @@
 infer_rooted_tree(genotypes)
 
 \method{as.phylo}{data.frame}(x)
+
+as_multiphylo(tbls)
 
 remove_outgroup(x)
 
@@ -20,12 +23,16 @@ rescale_children(x, scale)
 
 \item{x}{tbl}
 
+\item{tbls}{list of tbl}
+
 \item{scale}{numeric}
 }
 \value{
 tibble
 
 phylo
+
+multiPhylo
 
 tibble
 
@@ -35,6 +42,8 @@ tibble
 Infer rooted tree of sampled genotypes
 
 Take normal data.frame as tbl_tree for simplicity
+
+Add class name
 
 Remove dummy outgroup
 
