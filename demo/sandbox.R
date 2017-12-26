@@ -60,11 +60,13 @@ nest_tippairs = function(x) {
   nest_tippairs() %>% print()
 
 unnest_pairs = function(x) {
-  .nested = x %>% dplyr::transmute(parent=node, children) %>% dplyr::filter(purrr::map_lgl(children, ~!is.null(.x)))
-  bind_rows(
-    x %>% dplyr::mutate(children=list(NULL)),
-    .nested %>% tidyr::unnest()
-  )
+  .outer = x %>%
+    dplyr::transmute(parent=node, children) %>%
+    dplyr::filter(!purrr::map_lgl(children, is.null)) %>%
+    tidyr::unnest()
+  .inner = x %>% dplyr::mutate(children=list(NULL))
+  bind_rows(.outer, .inner) %>%
+    dplyr::mutate(isTip = !is.na(label))
 }
 
 .shrunk = .nested %>%
@@ -72,6 +74,10 @@ unnest_pairs = function(x) {
   unnest_pairs() %>% print() %>%
   unnest_pairs() %>% print() %>%
   dplyr::select(-term_length, -children) %>%
+  dplyr::arrange(node) %>%
   print()
 
-cowplot::plot_grid(.base %>% .plot(), .shrunk %>% .plot(), ncol = 2L)
+cowplot::plot_grid(
+  .base %>% .plot(),
+  .shrunk %>% .plot(),
+  nrow = 2L)
