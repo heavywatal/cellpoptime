@@ -21,26 +21,6 @@ trees = samples %>% purrr::map(infer_rooted_tree) %>% print()
 cowplot::plot_grid(plotlist = .plts, ncol = 2L)
 
 
-remove_dummy_root = function(x) {
-  if ("0" %in% x$label) {
-    dplyr::filter(x, label != "0" | is.na(label)) %>%
-      dplyr::mutate(parent = parent - 1L, node = node - 1L)
-  } else {
-    x
-  }
-}
-
-scale_children = function(x, scale) {
-  if (is.null(x)) {
-    x
-  } else {
-    dplyr::mutate(x,
-      branch.length = branch.length * scale,
-      children = purrr::map(children, scale_children, scale)
-    )
-  }
-}
-
 filter_scale_tips = function(x) {
   x %>%
     dplyr::filter(!is.na(branch.length)) %>%
@@ -53,7 +33,7 @@ filter_scale_tips = function(x) {
       scale = total_length / (branch.length + term_length),
       branch.length = branch.length * scale,
       term_length = term_length * scale,
-      children = purrr::map2(children, scale, scale_children)
+      children = purrr::map2(children, scale, rescale_children)
     ) %>%
     print() %>%
     dplyr::mutate(term_length = total_length) %>%
@@ -106,7 +86,7 @@ rescale_branches = function(x) {
     dplyr::arrange(node)
 }
 
-.base = trees[[4]] %>% remove_dummy_root() %>% print()
+.base = trees[[4]] %>% remove_outgroup() %>% print()
 .shrunk = .base %>% rescale_branches() %>% print()
 
 cowplot::plot_grid(

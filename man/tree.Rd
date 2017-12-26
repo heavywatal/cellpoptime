@@ -3,24 +3,40 @@
 \name{infer_rooted_tree}
 \alias{infer_rooted_tree}
 \alias{as.phylo.data.frame}
+\alias{remove_outgroup}
+\alias{rescale_children}
 \title{Infer rooted tree of sampled genotypes}
 \usage{
 infer_rooted_tree(genotypes)
 
 \method{as.phylo}{data.frame}(x)
+
+remove_outgroup(x)
+
+rescale_children(x, scale)
 }
 \arguments{
 \item{genotypes}{string vector}
 
 \item{x}{tbl}
+
+\item{scale}{numeric}
 }
 \value{
 tibble
 
 phylo
+
+tibble
+
+tibble
 }
 \description{
 Infer rooted tree of sampled genotypes
 
 Take normal data.frame as tbl_tree for simplicity
+
+Remove dummy outgroup
+
+Rescale chilren branches recursively
 }

@@ -24,3 +24,32 @@ as.phylo.data.frame = function(x) {
   class(x) = c("tbl_tree", class(x))
   tidytree::as.phylo(x)
 }
+
+#' Remove dummy outgroup
+#' @return tibble
+#' @rdname tree
+#' @export
+remove_outgroup = function(x) {
+  if ("0" %in% x$label) {
+    dplyr::filter(x, .data$label != "0" | is.na(.data$label)) %>%
+      dplyr::mutate(parent = .data$parent - 1L, node = .data$node - 1L)
+  } else {
+    x
+  }
+}
+
+#' Rescale chilren branches recursively
+#' @param scale numeric
+#' @return tibble
+#' @rdname tree
+#' @export
+rescale_children = function(x, scale) {
+  if (is.null(x)) {
+    x
+  } else {
+    x %>% dplyr::mutate(
+      branch.length = .data$branch.length * scale,
+      children = purrr::map(.data$children, rescale_children, scale)
+    )
+  }
+}
