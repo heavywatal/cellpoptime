@@ -1,25 +1,23 @@
 library(tidyverse)
 library(wtl)
 library(ggtree)
-loadNamespace("cowplot")
 refresh('cellpoptime')
 
 samples = ms(6L, 4L, theta = 100) %>% print()
 
 trees = samples %>% purrr::map(infer_rooted_tree) %>% print()
 
-.plot = function(.tbl) {
-  as.phylo(.tbl) %>%
-    ggplot(aes(x, y)) +
+.ggtree = function(.tbl) {
+    ggtree(.tbl) +
     geom_tree() +
     geom_tiplab() +
     theme_bw()
 }
 
-.plts = purrr::map(trees, .plot)
-
-cowplot::plot_grid(plotlist = .plts, ncol = 2L)
-
+trees %>%
+  as_multiphylo() %>%
+  .ggtree() +
+  facet_wrap(~.id)
 
 filter_scale_tips = function(x) {
   x %>%
@@ -89,7 +87,7 @@ rescale_branches = function(x) {
 .base = trees[[4]] %>% remove_outgroup() %>% print()
 .shrunk = .base %>% rescale_branches() %>% print()
 
-cowplot::plot_grid(
-  .base %>% .plot() + coord_cartesian(xlim = c(0, 400)),
-  .shrunk %>% .plot() + coord_cartesian(xlim = c(0, 400)),
-  nrow = 2L)
+list(.base, .shrunk) %>%
+  as_multiphylo() %>%
+  .ggtree() +
+  facet_wrap(~.id, ncol=1)
