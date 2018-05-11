@@ -7,10 +7,15 @@ refresh('cellpoptime')
   ggtree(.tbl) +
   geom_tree() +
   geom_tiplab() +
-  theme_bw()
+  wtl::theme_wtl()
 }
 
-samples = ms(6L, 4L, theta = 100) %>% print()
+.param = c('-D2', '-k100', '-N16', '-U8', '--mb=99', '--ms1mut')
+samples = purrr::rerun(4L, {
+  (tumopp::ms(16L, .param) %>% wtl::parse_ms())[[1L]]
+}) %>% print()
+
+# samples = wtl::ms(6L, 4L, theta = 100) %>% wtl::parse_ms() %>% print()
 trees = samples %>% purrr::map(infer_rooted_tree) %>% print()
 trees %>%
   as_multiphylo() %>%
@@ -90,3 +95,5 @@ rescale_branches = function(x) {
   as_multiphylo() %>%
   .ggtree() +
   facet_wrap(~.id, ncol=1)
+
+ggsave('scaletree.pdf', .p, width=7, height=9.9)

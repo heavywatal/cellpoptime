@@ -31,7 +31,7 @@ as.phylo.data.frame = function(x) {
 #' @rdname tree
 #' @export
 as_multiphylo = function(tbls) {
-  tbls = purrr::map(tbls, as.phylo)
+  tbls = purrr::map(tbls, as.phylo.data.frame)
   class(tbls) = c("multiPhylo", class(tbls))
   tbls
 }
