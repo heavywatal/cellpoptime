@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree.R
 \name{infer_rooted_tree}
 \alias{infer_rooted_tree}
-\alias{as.phylo.data.frame}
+\alias{as_phylo}
 \alias{as_multiphylo}
 \alias{remove_outgroup}
 \alias{rescale_children}
@@ -10,7 +10,7 @@
 \usage{
 infer_rooted_tree(genotypes)
 
-\method{as.phylo}{data.frame}(x)
+as_phylo(x)
 
 as_multiphylo(tbls)
 

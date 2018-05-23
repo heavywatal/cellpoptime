@@ -14,13 +14,11 @@ infer_rooted_tree = function(genotypes) {
 }
 
 #' Take normal data.frame as tbl_tree for simplicity
-#' @importFrom ape as.phylo
-#' @method as.phylo data.frame
 #' @param x tbl
 #' @return phylo
 #' @rdname tree
 #' @export
-as.phylo.data.frame = function(x) {
+as_phylo = function(x) {
   class(x) = c("tbl_tree", class(x))
   tidytree::as.phylo(x)
 }
@@ -31,7 +29,7 @@ as.phylo.data.frame = function(x) {
 #' @rdname tree
 #' @export
 as_multiphylo = function(tbls) {
-  tbls = purrr::map(tbls, as.phylo.data.frame)
+  tbls = purrr::map(tbls, as_phylo)
   class(tbls) = c("multiPhylo", class(tbls))
   tbls
 }
@@ -58,7 +56,8 @@ rescale_children = function(x, scale) {
   if (is.null(x)) {
     x
   } else {
-    x %>% dplyr::mutate(
+    dplyr::mutate(
+      x,
       branch.length = .data$branch.length * scale,
       children = purrr::map(.data$children, rescale_children, scale)
     )
