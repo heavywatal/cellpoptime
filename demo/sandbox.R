@@ -33,6 +33,7 @@ add_extra_columns = function(x) {
       mutations = branch.length,
       branch.length = pmax(branch.length, 0.01),
       term_length = 0,
+      exp_desc = ifelse(is_tip, 1L, NA_integer_), # expected number of descendant cells
       children = list(NULL)
     )
 }
@@ -57,9 +58,28 @@ filter_scale_tips = function(x) {
 }
 .base %>% add_extra_columns() %>% filter_scale_tips()
 
+p_binom = function(events) {
+  pbinom(min(events), sum(events), 0.5)
+}
+p_binom(c(1, 8))
+
+detect_driver = function(exp_desc) {
+  p = exp_desc * 0 + 1
+  p[which.max(exp_desc)] = p_binom(exp_desc - 1)
+  p
+}
+detect_driver(c(1, 8))
+
 nest_tippairs = function(x) {
   nested = filter_scale_tips(x) %>%
-    tidyr::nest(-parent, -term_length, .key="children") %>%
+    dplyr::group_by(parent, term_length) %>%
+    dplyr::mutate(p_driver = detect_driver(exp_desc)) %>%
+    tidyr::nest(.key="children") %>%
+    dplyr::mutate(exp_desc = purrr::map_int(children, ~{
+      #TODO weight by mutatoins
+      print(.x$exp_desc)
+      sum(.x$exp_desc)
+    })) %>%
     print()
   x %>%
     dplyr::filter(is.na(branch.length) | !parent %in% nested$parent) %>%
@@ -68,8 +88,9 @@ nest_tippairs = function(x) {
     dplyr::mutate(
       is_tip = is_tip | node %in% nested$parent,
       term_length = pmax(term_length, term_length.y, na.rm=TRUE),
+      exp_desc = dplyr::coalesce(exp_desc, exp_desc.y),
       children = ifelse(purrr::map_lgl(children, is.null), children.y, children),
-      term_length.y = NULL, children.y = NULL)
+      term_length.y = NULL, exp_desc.y = NULL, children.y = NULL)
 }
 .base %>% add_extra_columns() %>% nest_tippairs() #%>% nest_tippairs() %>% nest_tippairs()
 
