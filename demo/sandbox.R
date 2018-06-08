@@ -118,10 +118,19 @@ rescale_branches = function(x) {
 }
 
 .shrunk = .base %>% add_extra_columns() %>% rescale_branches() %>% print()
-
-.p = list(.base, .shrunk) %>%
+.shrunk_cols = .shrunk %>% dplyr::select(-parent, -branch.length, -label, -is_tip)
+.fortified = list(.base, .shrunk) %>%
   as_multiphylo() %>%
-  .ggtree() +
-  facet_wrap(~.id, ncol=1)
+  ggtree::fortify() %>%
+  dplyr::left_join(.shrunk_cols, by = "node") %>%
+  print()
+
+.p = ggplot(.fortified, aes(x, y)) +
+  geom_tree() +
+  geom_nodepoint(data = function(x) {dplyr::filter(x, p_driver < 0.01)}, colour = "orangered", size = 4) +
+  geom_tiplab() +
+  facet_wrap(~.id, ncol=1) +
+  wtl::theme_wtl() +
+  wtl::erase(axis.title)
 .p
 ggsave('scaletree.pdf', .p, width=7, height=9.9)
