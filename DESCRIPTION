@@ -3,7 +3,7 @@ Title: Analyze and visualize phylogenetic tree of cell population
 Version: 0.0.0.9000
 Authors@R: person('Watal M.', 'Iwasaki', email='heavy.watal@gmail.com', role=c('aut', 'cre'))
 Description: Analyze and visualize phylogenetic tree of cell population.
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.4.0)
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -20,3 +20,4 @@ Imports:
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
 RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)
