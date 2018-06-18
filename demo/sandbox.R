@@ -2,6 +2,7 @@ library(tidyverse)
 library(wtl)
 library(tumopp)
 library(ggtree)
+refresh('rtumopp')
 refresh('cellpoptime')
 
 .ggtree = function(.tbl) {
@@ -14,7 +15,7 @@ refresh('cellpoptime')
 N = 20L
 .param = c('-D2', '-k100', paste0('-N', N), '-U10', '--mb=99', '--ms1mut', '-u0')
 samples = purrr::rerun(4L, {
-  (tumopp::mslike(N, .param) %>% wtl::parse_ms())[[1L]]
+  (tumopp::mslike(N, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
 }) %>% print()
 
 # samples = wtl::ms(6L, 4L, theta = 100) %>% wtl::parse_ms() %>% print()

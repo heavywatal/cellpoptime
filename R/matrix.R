@@ -1,16 +1,20 @@
-#' Convert 01 string vector to integer matrix
-#' @param x string vector like '101'
-#' @return integer matrix
+#' Functions for genotype matrix
+#'
+#' @description
+#' `infer_rooted_tree` infers rooted tree of sampled genotypes
+#' @param mtrx integer matrix; rows are samples, columns are sites.
 #' @rdname matrix
 #' @export
-as_int_matrix = function(x) {
-  x = stringr::str_split(x, "") %>% purrr::map(as.integer)
-  matrix(unlist(x), nrow = length(x), byrow = TRUE)
+infer_rooted_tree = function(mtrx) {
+  mtrx %>%
+    add_outgroup() %>%
+    stats::dist(method = "manhattan") %>%
+    ape::fastme.bal() %>%
+    ape::root("0") %>%
+    tidytree::as_data_frame()
 }
 
-#' Add wild type row with genotype 000 and name 0
-#' @param mtrx integer matrix
-#' @return integer matrix
+#' `add_outgroup` adds wild type row with genotype 000 and name 0
 #' @rdname matrix
 #' @export
 add_outgroup = function(mtrx) {

@@ -70,3 +70,16 @@ unnest_children = function(x) {
   dplyr::bind_rows(.outer, .inner) %>%
     dplyr::mutate(is_tip = !is.na(.data$label))
 }
+
+# Rescale chilren branches recursively
+rescale_children = function(x, scale) {
+  if (is.null(x)) {
+    x
+  } else {
+    dplyr::mutate(
+      x,
+      branch.length = .data$branch.length * scale,
+      children = purrr::map(.data$children, rescale_children, scale)
+    )
+  }
+}
