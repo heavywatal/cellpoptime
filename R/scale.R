@@ -13,7 +13,7 @@ add_extra_columns = function(x) {
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
-      exp_desc = ifelse(.data$is_tip, 1L, NA_integer_), # expected number of descendant cells
+      exp_desc = ifelse(.data$is_tip, 1, NA_real_), # expected number of descendant cells
       children = list(NULL)
     )
 }
@@ -44,9 +44,8 @@ nest_tippairs = function(x) {
     dplyr::group_by(.data$parent, .data$term_length) %>%
     dplyr::mutate(p_driver = detect_driver(.data$exp_desc)) %>%
     tidyr::nest(.key="children") %>%
-    dplyr::mutate(exp_desc = purrr::map_int(.data$children, ~{
-      #TODO weight by mutatoins
-      sum(.x$exp_desc)
+    dplyr::mutate(exp_desc = purrr::map_dbl(.data$children, ~{
+      2 * min(.x$exp_desc * .x$mutations)
     }))
   x %>%
     dplyr::filter(is.na(.data$branch.length) | !.data$parent %in% nested$parent) %>%
