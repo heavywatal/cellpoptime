@@ -13,9 +13,15 @@ refresh('cellpoptime')
 }
 
 N = 20L
-.param = c('-D2', '-k100', paste0('-N', N), '-U10', '--mb=99', '--ms1mut', '-u0')
+.param = c('-D2', '-k100', paste0('-N', N), paste0('-U', N / 2L), '--mb=99', '--ms1mut', '-u0')
 samples = purrr::rerun(4L, {
   (tumopp::mslike(N, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
+}) %>% print()
+
+N = 2000L
+.param = c('-D2', '-k100', paste0('-N', N), paste0('-U', N / 2L), '--mb=99', '--ms1mut', '-u0')
+samples = purrr::rerun(4L, {
+  (tumopp::mslike(N / 100L, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
 }) %>% print()
 
 # samples = wtl::ms(6L, 4L, theta = 100) %>% wtl::parse_ms() %>% print()
@@ -48,10 +54,14 @@ rescale_branches = function(x) {
 }
 
 .shrunk = .base %>% add_extra_columns() %>% rescale_branches() %>% print()
-.shrunk_cols = .shrunk %>% dplyr::select(-parent, -branch.length, -label, -is_tip)
+.mutant = .shrunk %>% dplyr::top_n(1L, desc(p_driver)) %>% dplyr::pull(node) %>% print()
+
+.shrunk_cols = .shrunk %>%
+  group_clade(.mutant) %>%
+  dplyr::select(-parent, -branch.length, -label, -is_tip)
 
 .root = .base %>% dplyr::filter(is.na(.data$branch.length)) %>% dplyr::pull("parent") %>% print()
-.graph = .base[,c(1L, 2L)] %>% as.matrix() %>% igraph::graph_from_edgelist()
+.graph = .base[,c(1L, 2L)] %>% igraph::graph_from_data_frame()
 .gdist = igraph::distances(.graph, as.character(.root), mode = "out") %>% as.vector()
 
 .fortified = list(.base, .shrunk) %>%
@@ -65,9 +75,11 @@ rescale_branches = function(x) {
 filter_p_driver = function(x) {dplyr::filter(x, p_driver == .p_min)}
 
 .p = ggplot(.fortified, aes(x, y)) +
-  geom_tree() +
-  geom_nodepoint(data = filter_p_driver, colour = "orangered", size = 4) +
+  geom_tree(aes(colour=group)) +
+  scale_colour_manual(values = c(`0` = '#333333', `1` = 'orangered')) +
   geom_tiplab() +
+  geom_text2(aes(subset=!isTip, label=node), hjust=-.3) +
+  # geom_nodepoint(data = filter_p_driver, colour = "orangered", size = 4) +
   facet_wrap(~.id, ncol=1) +
   wtl::theme_wtl() +
   wtl::erase(axis.title)
@@ -120,7 +132,7 @@ system("magick -loop 1 tree1-raw.gif -layers Optimize tree1.gif")
     dplyr::left_join(.shrunk_cols, by = "node")
 })
 
-.plot_scale = function(.x, xlim = .xlim) {
+.plot_scale = function(.x, xlim) {
   ggplot(.x, aes(x, y)) +
     geom_tree() +
     geom_nodepoint(data = filter_p_driver, colour = "orangered", size = 4) +
@@ -131,11 +143,45 @@ system("magick -loop 1 tree1-raw.gif -layers Optimize tree1.gif")
 }
 
 .xlim = range(.fortified$x) %>% print()
-.plts_scale = .fortified_l %>% purrr::map(.plot_scale)
+.plts_scale = .fortified_l %>% purrr::map(.plot_scale, xlim = .xlim)
 .tmpl = "~/git/slides-draft/content/tumopp2018ncc/figure-ncc/scale.%02d.png"
 purrr::iwalk(.plts_scale, ~ggsave(sprintf(.tmpl, .y), .x, width=3, height=1, scale=2.4, dpi=240))
-.final = .fortified_l %>% purrr::pluck(length(.)) %>% .plot_scale(NULL)
+.final = .fortified_l %>% purrr::pluck(length(.)) %>% .plot_scale(xlim = NULL)
 ggsave(sprintf(.tmpl, 99L), .final, width=3, height=1, scale=2.4, dpi=240)
 
 system("magick -loop 1 -delay 50 scale*.png scale-raw.gif")
 system("magick -loop 1 scale-raw.gif -layers Optimize scale.gif")
+
+# #######1#########2#########3#########4#########5#########6#########7#########
+# Triangle
+
+.final_tbl = .fortified_l %>% purrr::pluck(length(.)) %>% print()
+
+.final_tbl %>% .plot_scale(xlim = NULL)
+
+.source = .final_tbl %>% dplyr::filter(parent == node) %>% dplyr::pull(node) %>% print()
+.mutantp = .final_tbl %>% dplyr::filter(node == .mutant) %>% dplyr::pull(parent) %>% print()
+.fastnodes = tumopp:::paths_to_sink(.graph, as.character(.mutant))[[1L]] %>% as.integer() %>% print()
+.fastvertices = .final_tbl %>%
+  dplyr::filter(isTip, node %in% .fastnodes) %>%
+  dplyr::filter(y %in% range(y)) %>%
+  dplyr::pull(node) %>%
+  print()
+
+.fast_tbl = .final_tbl %>%
+  dplyr::filter(x, node %in% c(.fastvertices, .mutant)) %>%
+  print()
+
+.slowvertices = .final_tbl %>%
+  dplyr::filter(isTip, !node %in% .fastnodes) %>%
+  dplyr::filter(y %in% range(y)) %>%
+  dplyr::pull(node) %>%
+  print()
+
+.slow_tbl = .final_tbl %>%
+  dplyr::filter(.data$node %in% c(.slowvertices, .mutantp, .source)) %>%
+  print()
+
+.final_tbl %>% .plot_scale(xlim = NULL) +
+  geom_polygon(data = .fast_tbl, alpha = 0.5, fill = "#7a0177")+
+  geom_polygon(data = .slow_tbl, alpha = 0.5, fill = "#f768a1")
