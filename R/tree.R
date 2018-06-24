@@ -17,6 +17,14 @@ as_multiphylo = function(tbls) {
   tbls
 }
 
+#' @param node ancestral node
+#' @rdname tree
+#' @export
+group_clade = function(x, node) {
+  class(x) = c("tbl_tree", class(x))
+  ggtree::groupClade(x, node)
+}
+
 #' Remove dummy outgroup
 #' @rdname tree
 #' @export

@@ -3,6 +3,7 @@
 \name{as_phylo}
 \alias{as_phylo}
 \alias{as_multiphylo}
+\alias{group_clade}
 \alias{remove_outgroup}
 \title{Take normal data.frame as tbl_tree for simplicity}
 \usage{
@@ -10,12 +11,16 @@ as_phylo(x)
 
 as_multiphylo(tbls)
 
+group_clade(x, node)
+
 remove_outgroup(x)
 }
 \arguments{
 \item{x}{tbl_tree}
 
 \item{tbls}{list of tbl_tree}
+
+\item{node}{ancestral node}
 }
 \description{
 Take normal data.frame as tbl_tree for simplicity
