@@ -2,6 +2,7 @@
 % Please edit documentation in R/scale.R
 \name{scale_branches}
 \alias{scale_branches}
+\alias{scale_branches_record}
 \alias{add_extra_columns}
 \alias{filter_scale_tips}
 \alias{nest_tippairs}
@@ -9,6 +10,8 @@
 \title{Scale branches}
 \usage{
 scale_branches(x)
+
+scale_branches_record(x)
 
 add_extra_columns(x)
 

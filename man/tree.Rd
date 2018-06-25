@@ -4,6 +4,7 @@
 \alias{as_phylo}
 \alias{as_multiphylo}
 \alias{group_clade}
+\alias{upstream_corner}
 \alias{remove_outgroup}
 \title{Take normal data.frame as tbl_tree for simplicity}
 \usage{
@@ -12,6 +13,8 @@ as_phylo(x)
 as_multiphylo(tbls)
 
 group_clade(x, node)
+
+upstream_corner(x, node)
 
 remove_outgroup(x)
 }

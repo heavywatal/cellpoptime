@@ -25,6 +25,16 @@ group_clade = function(x, node) {
   tidytree::groupClade(x, node)
 }
 
+#' @rdname tree
+#' @export
+upstream_corner = function(x, node) {
+  row_n = dplyr::filter(x, .data$node == !!node)
+  row_p = dplyr::filter(x, .data$node == row_n$parent)
+  row_n %>%
+    dplyr::transmute(.data$parent, .data$node, .data$y, .data$isTip) %>%
+    dplyr::mutate(x = row_p$x)
+}
+
 #' Remove dummy outgroup
 #' @rdname tree
 #' @export
