@@ -22,7 +22,7 @@ as_multiphylo = function(tbls) {
 #' @export
 group_clade = function(x, node) {
   class(x) = c("tbl_tree", class(x))
-  ggtree::groupClade(x, node)
+  tidytree::groupClade(x, node)
 }
 
 #' Remove dummy outgroup
