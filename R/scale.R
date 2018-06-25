@@ -1,8 +1,23 @@
 #' Scale branches
 #'
 #' @description
-#' `add_extra_columns` prepares necessary columns for scaling
+#' `scale_branches` is a shortcut
 #' @param x data.frame
+#' @rdname scale
+#' @export
+scale_branches = function(x) {
+  num_edges = nrow(x)
+  while (nrow(x) > 1L) {
+    x = nest_tippairs(x)
+  }
+  x = dplyr::mutate(x, exp_sibs = 1)
+  while (nrow(x) < num_edges) {
+    x = unnest_children(x)
+  }
+  dplyr::arrange(x, .data$node)
+}
+
+#' `add_extra_columns` prepares necessary columns for scaling
 #' @rdname scale
 #' @export
 add_extra_columns = function(x) {
@@ -14,6 +29,7 @@ add_extra_columns = function(x) {
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
       exp_desc = ifelse(.data$is_tip, 1, NA_real_), # expected number of descendant cells
+      exp_sibs = NA_real_, # expected number of sibling cells
       children = list(NULL)
     )
 }
@@ -62,12 +78,23 @@ nest_tippairs = function(x) {
 #' @export
 unnest_children = function(x) {
   .outer = x %>%
-    dplyr::transmute(parent=.data$node, .data$children) %>%
+    dplyr::transmute(
+      parent = .data$node,
+      tmp_exp_sibs = .data$exp_sibs,
+      .data$children) %>%
     dplyr::filter(!purrr::map_lgl(.data$children, is.null)) %>%
-    tidyr::unnest()
+    tidyr::unnest() %>%
+    dplyr::mutate(
+      exp_sibs = .data$tmp_exp_sibs * infer_sibs(.data$mutations),
+      tmp_exp_sibs = NULL
+    )
   .inner = x %>% dplyr::mutate(children=list(NULL))
   dplyr::bind_rows(.outer, .inner) %>%
     dplyr::mutate(is_tip = !is.na(.data$label))
+}
+
+infer_sibs = function(num_mutations) {
+  2 ** (num_mutations - 1)
 }
 
 # Rescale chilren branches recursively
