@@ -3,7 +3,6 @@
 \name{scale_branches}
 \alias{scale_branches}
 \alias{scale_branches_record}
-\alias{add_extra_columns}
 \alias{filter_scale_tips}
 \alias{nest_tippairs}
 \alias{unnest_children}
@@ -12,8 +11,6 @@
 scale_branches(x)
 
 scale_branches_record(x)
-
-add_extra_columns(x)
 
 filter_scale_tips(x)
 
@@ -27,5 +24,5 @@ unnest_children(x)
 \description{
 \code{scale_branches} is a shortcut
 
-\code{add_extra_columns} prepares necessary columns for scaling
+\code{scale_branches_record} records scaling process for explanation
 }

@@ -6,6 +6,7 @@
 #' @rdname scale
 #' @export
 scale_branches = function(x) {
+  x = add_extra_columns(x)
   num_edges = nrow(x)
   while (nrow(x) > 1L) {
     x = nest_tippairs(x)
@@ -13,14 +14,18 @@ scale_branches = function(x) {
   while (nrow(x) < num_edges) {
     x = unnest_children(x)
   }
-  dplyr::arrange(x, .data$node)
+  x %>%
+    dplyr::select(-.data$children) %>%
+    dplyr::arrange(.data$node)
 }
 
+#' `scale_branches_record` records scaling process for explanation
 #' @rdname scale
 #' @export
 scale_branches_record = function(x) {
+  x = add_extra_columns(x)
   num_edges = nrow(x)
-  l = NULL
+  l = list(x)
   while (nrow(x) > 1L) {
     x = nest_tippairs(x)
     l = c(l, list(x))
@@ -29,13 +34,13 @@ scale_branches_record = function(x) {
     while (nrow(.x) < num_edges) {
       .x = unnest_children(.x)
     }
-    dplyr::arrange(.x, node)
+    .x %>%
+      dplyr::select(-.data$children) %>%
+      dplyr::arrange(.data$node)
   })
 }
 
-#' `add_extra_columns` prepares necessary columns for scaling
-#' @rdname scale
-#' @export
+# Prepare necessary columns for scaling
 add_extra_columns = function(x) {
   x %>%
     dplyr::arrange(.data$parent) %>%
