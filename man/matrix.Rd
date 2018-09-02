@@ -14,6 +14,4 @@ add_outgroup(mtrx)
 }
 \description{
 \code{infer_rooted_tree} infers rooted tree of sampled genotypes
-
-\code{add_outgroup} adds wild type row with genotype 000 and name 0
 }

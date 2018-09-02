@@ -6,7 +6,7 @@
 \alias{cellpoptime-package}
 \title{cellpoptime: analyze and visualize phylogenetic tree of cell population}
 \description{
-cellpoptime: analyze and visualize phylogenetic tree of cell population
+Analyze and visualize phylogenetic tree of cell population.
 }
 \seealso{
 Useful links:
