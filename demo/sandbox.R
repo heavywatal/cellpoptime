@@ -8,21 +8,21 @@ wtl::refresh('cellpoptime')
 setwd(.wd)
 
 N = 20L
-.param = c('-D2', '-k100', paste0('-N', N), paste0('-U', N / 2L), '--mb=99', '--ms1mut', '-u0')
+.param = c('-D2', '-k100', paste0('-N', N), paste0('-U', N / 2L), '--mb=99')
 samples = purrr::rerun(4L, {
-  (tumopp::mslike(N, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(N, -1)
 }) %>% print()
 
 N = 127L
-.param = c('-D2', '-k1000', paste0('-N', N), paste0('-U', N %/% 2L - 1L), '--mb=99', '--ms1mut', '-u0')
+.param = c('-D2', '-k1000', paste0('-N', N), paste0('-U', N %/% 2L - 1L), '--mb=99')
 samples_full = purrr::rerun(4L, {
-  (tumopp::mslike(N, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(N, -1)
 })
 wtl::save_as(samples_full)
 # samples_full = readRDS("samples_full.rds")
 
 samples_part = purrr::rerun(4L, {
-  (tumopp::mslike(16L, .param) %>% wtl::parse_ms(byrow=TRUE))[[1L]]
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(16L, -1)
 })
 wtl::save_as(samples_part)
 # samples_part = readRDS("samples_part.rds")
