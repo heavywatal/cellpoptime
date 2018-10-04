@@ -1,4 +1,6 @@
-#' Detect driver mutations
+#' Functions for detecting driver mutations
+#
+#' `detect_driver` returns a vector of p-values.
 #' @param exp_desc expected number of descendants
 #' @rdname driver
 #' @export
@@ -8,6 +10,8 @@ detect_driver = function(exp_desc) {
   p
 }
 
+#' @description
+#' `p_binom` is a shortcut.
 #' @param events integer
 #' @rdname driver
 #' @export

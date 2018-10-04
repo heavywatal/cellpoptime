@@ -10,19 +10,19 @@ setwd(.wd)
 N = 20L
 .param = c('-D2', '-k100', paste0('-N', N), paste0('-U', N / 2L), '--mb=99')
 samples = purrr::rerun(4L, {
-  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(N, -1)
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::make_sample(N, -1)
 }) %>% print()
 
 N = 127L
 .param = c('-D2', '-k1000', paste0('-N', N), paste0('-U', N %/% 2L - 1L), '--mb=99')
 samples_full = purrr::rerun(4L, {
-  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(N, -1)
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::make_sample(N, -1)
 })
 wtl::save_as(samples_full)
 # samples_full = readRDS("samples_full.rds")
 
 samples_part = purrr::rerun(4L, {
-  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::ms(16L, -1)
+  tumopp::tumopp(.param)$graph[[1L]] %>% tumopp::make_sample(16L, -1)
 })
 wtl::save_as(samples_part)
 # samples_part = readRDS("samples_part.rds")
@@ -54,7 +54,7 @@ trees %>%
   dplyr::select(-parent, -branch.length, -label, -is_tip) %>%
   print()
 
-.fortified = .shrunkl %>%
+.fortified = .scaled_rec %>%
   as_multiphylo() %>%
   ggtree::fortify() %>%
   dplyr::left_join(.meta_info, by = "node") %>%

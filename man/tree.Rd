@@ -6,7 +6,7 @@
 \alias{group_clade}
 \alias{upstream_corner}
 \alias{remove_outgroup}
-\title{Take normal data.frame as tbl_tree for simplicity}
+\title{Functions to process tidytree objects}
 \usage{
 as_phylo(x)
 
@@ -26,9 +26,13 @@ remove_outgroup(x)
 \item{node}{ancestral node}
 }
 \description{
-Take normal data.frame as tbl_tree for simplicity
+\code{as_phylo} is a shortcut to convert data.frame to ape::phylo.
 
-Add class name
+\code{as_multiphylo} adds class name.
 
-Remove dummy outgroup
+\code{group_clade} is a shortcut to apply \code{tidytree::groupClade} to data.frame.
+
+\code{upstream_corner} finds the joint between a node and its parent
+
+\code{remove_outgroup} removes dummy outgroup.
 }

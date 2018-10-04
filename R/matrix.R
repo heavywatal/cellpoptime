@@ -1,7 +1,7 @@
 #' Functions for genotype matrix
 #'
 #' @description
-#' `infer_rooted_tree` infers rooted tree of sampled genotypes
+#' `infer_rooted_tree` infers rooted tree of sampled genotypes.
 #' @param mtrx integer matrix; rows are samples, columns are sites.
 #' @rdname matrix
 #' @export
@@ -14,7 +14,8 @@ infer_rooted_tree = function(mtrx) {
     tidytree::as_data_frame()
 }
 
-#' `add_outgroup` adds wild type row with genotype 000 and name 0
+#' @description
+#' `add_outgroup` adds wild type row with genotype 000 and name 0.
 #' @rdname matrix
 #' @export
 add_outgroup = function(mtrx) {

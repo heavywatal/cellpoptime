@@ -1,7 +1,7 @@
 #' Scale branches
 #'
 #' @description
-#' `scale_branches` is a shortcut
+#' `scale_branches` is a shortcut.
 #' @param x data.frame
 #' @rdname scale
 #' @export
@@ -19,7 +19,8 @@ scale_branches = function(x) {
     dplyr::arrange(.data$node)
 }
 
-#' `scale_branches_record` records scaling process for explanation
+#' @description
+#' `scale_branches_record` records scaling process for explanation.
 #' @rdname scale
 #' @export
 scale_branches_record = function(x) {

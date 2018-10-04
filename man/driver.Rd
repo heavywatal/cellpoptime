@@ -3,7 +3,8 @@
 \name{detect_driver}
 \alias{detect_driver}
 \alias{p_binom}
-\title{Detect driver mutations}
+\title{Functions for detecting driver mutations
+\code{detect_driver} returns a vector of p-values.}
 \usage{
 detect_driver(exp_desc)
 
@@ -15,5 +16,5 @@ p_binom(events)
 \item{events}{integer}
 }
 \description{
-Detect driver mutations
+\code{p_binom} is a shortcut.
 }

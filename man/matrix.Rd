@@ -13,5 +13,7 @@ add_outgroup(mtrx)
 \item{mtrx}{integer matrix; rows are samples, columns are sites.}
 }
 \description{
-\code{infer_rooted_tree} infers rooted tree of sampled genotypes
+\code{infer_rooted_tree} infers rooted tree of sampled genotypes.
+
+\code{add_outgroup} adds wild type row with genotype 000 and name 0.
 }

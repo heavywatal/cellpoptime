@@ -22,5 +22,7 @@ unnest_children(x)
 \item{x}{data.frame}
 }
 \description{
-\code{scale_branches} is a shortcut
+\code{scale_branches} is a shortcut.
+
+\code{scale_branches_record} records scaling process for explanation.
 }
