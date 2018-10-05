@@ -50,7 +50,6 @@ add_extra_columns = function(x) {
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
-      exp_desc = ifelse(.data$is_tip, 1, NA_real_), # expected number of descendant cells
       exp_sibs = 1, # expected number of sibling cells
       children = list(NULL)
     )
@@ -61,17 +60,19 @@ add_extra_columns = function(x) {
 filter_scale_tips = function(x) {
   x %>%
     dplyr::filter(.data$is_tip) %>%
+    dplyr::mutate(total_length = .data$branch.length + .data$term_length) %>%
     dplyr::group_by(.data$parent) %>%
     dplyr::filter(dplyr::n() > 1L) %>%
-    dplyr::mutate(total_length = min(.data$branch.length + .data$term_length)) %>%
+    dplyr::mutate(
+      p_driver = detect_driver(.data$total_length),
+      term_length = min(.data$total_length),
+    ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      scale = .data$total_length / (.data$branch.length + .data$term_length),
+      scale = .data$term_length / .data$total_length,
       branch.length = .data$branch.length * .data$scale,
-      term_length = .data$term_length * .data$scale,
-      children = purrr::map2(.data$children, .data$scale, rescale_children)
+      children = purrr::map2(.data$children, .data$scale, rescale_descendants)
     ) %>%
-    dplyr::mutate(term_length = .data$total_length) %>%
     dplyr::select(-.data$scale, -.data$total_length)
 }
 
@@ -80,20 +81,15 @@ filter_scale_tips = function(x) {
 nest_tippairs = function(x) {
   nested = filter_scale_tips(x) %>%
     dplyr::group_by(.data$parent, .data$term_length) %>%
-    dplyr::mutate(p_driver = detect_driver(.data$exp_desc)) %>%
-    tidyr::nest(.key="children") %>%
-    dplyr::mutate(exp_desc = purrr::map_dbl(.data$children, ~{
-      2 * min(.x$exp_desc * .x$mutations)
-    }))
+    tidyr::nest(.key="children")
   x %>%
     dplyr::filter(is.na(.data$branch.length) | !.data$parent %in% nested$parent) %>%
     dplyr::left_join(nested, by=c(node="parent"), suffix=c("", ".y")) %>%
     dplyr::mutate(
       is_tip = .data$is_tip | .data$node %in% nested$parent,
       term_length = pmax(.data$term_length, .data$term_length.y, na.rm=TRUE),
-      exp_desc = dplyr::coalesce(.data$exp_desc, .data$exp_desc.y),
       children = ifelse(purrr::map_lgl(.data$children, is.null), .data$children.y, .data$children),
-      term_length.y = NULL, exp_desc.y = NULL, children.y = NULL)
+      term_length.y = NULL, children.y = NULL)
 }
 
 #' @rdname scale
@@ -119,15 +115,15 @@ infer_sibs = function(num_mutations) {
   2 ** (num_mutations - 1)
 }
 
-# Rescale chilren branches recursively
-rescale_children = function(x, scale) {
-  if (is.null(x)) {
+# Rescale descendant branches recursively
+rescale_descendants = function(x, scale) {
+  if (is.null(x) || scale == 1) {
     x
   } else {
     dplyr::mutate(
       x,
       branch.length = .data$branch.length * scale,
-      children = purrr::map(.data$children, rescale_children, scale)
+      children = purrr::map(.data$children, rescale_descendants, scale)
     )
   }
 }
