@@ -2,19 +2,15 @@
 % Please edit documentation in R/driver.R
 \name{detect_driver}
 \alias{detect_driver}
-\alias{p_binom}
 \title{Functions for detecting driver mutations
 \code{detect_driver} returns a vector of p-values.}
 \usage{
-detect_driver(exp_desc)
-
-p_binom(events)
+detect_driver(x)
 }
 \arguments{
-\item{exp_desc}{expected number of descendants}
-
-\item{events}{integer}
+\item{x}{a pair of branch lengths (number of mutations)}
 }
 \description{
-\code{p_binom} is a shortcut.
+Functions for detecting driver mutations
+\code{detect_driver} returns a vector of p-values.
 }
