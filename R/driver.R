@@ -5,5 +5,5 @@
 #' @rdname driver
 #' @export
 detect_driver = function(x) {
-  ppois(x, min(x), lower.tail=FALSE)
+  stats::ppois(x, min(x), lower.tail=FALSE)
 }
