@@ -19,7 +19,5 @@ infer_rooted_tree = function(mtrx) {
 #' @rdname matrix
 #' @export
 add_outgroup = function(mtrx) {
-  mtrx = rbind(0L, mtrx)
-  rownames(mtrx) = seq_len(nrow(mtrx)) - 1L
-  mtrx
+  rbind(`0` = 0L, mtrx)
 }
