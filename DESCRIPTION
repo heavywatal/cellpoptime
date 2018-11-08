@@ -12,6 +12,7 @@ Suggests:
 Imports:
   ape,
   dplyr,
+  ggplot2,
   igraph,
   magrittr,
   purrr,
