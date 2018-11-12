@@ -32,8 +32,8 @@ fortify_cellpop = function(model, data, ...) {
 plot_driver = function(data, verbose = FALSE) {
   p = ggplot2::ggplot(data, ggplot2::aes_(~x, ~y)) +
     ggtree::geom_tree(ggplot2::aes_(colour = ~group)) +
-    ggplot2::scale_colour_manual(values = c(`0` = "#f768a1", `1` = "#7a0177"), guide = FALSE) +
-    ggplot2::theme_void()
+    ggplot2::theme_void() +
+    ggplot2::theme(legend.position = "none")
   if (verbose) {
     p = p +
       ggplot2::geom_point(ggplot2::aes_(alpha = ~-log10(p_driver), colour = ~group), size = 2) +
