@@ -42,16 +42,3 @@ upstream_corner = function(x, node) {
     dplyr::transmute(.data$parent, .data$node, .data$y, .data$isTip) %>%
     dplyr::mutate(x = row_p$x)
 }
-
-#' @description
-#' `remove_outgroup` removes dummy outgroup.
-#' @rdname tree
-#' @export
-remove_outgroup = function(x) {
-  if ("0" %in% x$label) {
-    dplyr::filter(x, .data$label != "0" | is.na(.data$label)) %>%
-      dplyr::mutate(parent = .data$parent - 1L, node = .data$node - 1L)
-  } else {
-    x
-  }
-}

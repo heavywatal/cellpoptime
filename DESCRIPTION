@@ -22,5 +22,5 @@ Imports:
   tidytree
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)

@@ -5,7 +5,6 @@
 \alias{as_multiphylo}
 \alias{group_clade}
 \alias{upstream_corner}
-\alias{remove_outgroup}
 \title{Functions to process tidytree objects}
 \usage{
 as_phylo(x)
@@ -15,8 +14,6 @@ as_multiphylo(tbls)
 group_clade(x, node)
 
 upstream_corner(x, node)
-
-remove_outgroup(x)
 }
 \arguments{
 \item{x}{tbl_tree}
@@ -33,6 +30,4 @@ remove_outgroup(x)
 \code{group_clade} is a shortcut to apply \code{tidytree::groupClade} to data.frame.
 
 \code{upstream_corner} finds the joint between a node and its parent
-
-\code{remove_outgroup} removes dummy outgroup.
 }
