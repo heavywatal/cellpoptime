@@ -2,12 +2,18 @@
 % Please edit documentation in R/plot.R
 \name{fortify_cellpop}
 \alias{fortify_cellpop}
-\alias{plot_driver}
+\alias{plot_tree}
+\alias{geom_nodename}
+\alias{geom_driver}
 \title{Functions for visualization}
 \usage{
 fortify_cellpop(model, data, ...)
 
-plot_driver(data, verbose = FALSE)
+plot_tree(data, colour = "group")
+
+geom_nodename()
+
+geom_driver()
 }
 \arguments{
 \item{model}{output of \code{scale_branches()}}
@@ -16,10 +22,14 @@ plot_driver(data, verbose = FALSE)
 
 \item{...}{unused}
 
-\item{verbose}{add verbose information}
+\item{colour}{column to colorcode}
 }
 \description{
 \code{fortify_cellpop} prepares plottable data.frame.
 
-\code{plot_driver} draws tbl_tree.
+\code{plot_tree} draws tbl_tree.
+
+\code{geom_nodename} annotates tree nodes.
+
+\code{geom_driver} annotates driver mutations.
 }

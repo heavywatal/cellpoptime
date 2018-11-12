@@ -9,9 +9,16 @@
 #' @export
 fortify_cellpop = function(model, data, ...) {
     if (missing(data)) data = model
-    mutant = dplyr::top_n(model, 1L, dplyr::desc(.data$p_driver))
-    meta_info = group_clade(model, mutant$node) %>%
+    mutant = filter_origins(model)$node
+    meta_info = group_clade(model, mutant) %>%
       dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
+    ggtree_fortify(data) %>%
+      dplyr::left_join(meta_info, by = "node")
+}
+
+#' @description
+#' `ggtree_fortify` prepares plottable data.frame.
+ggtree_fortify = function(data) {
     data = if (is.data.frame(data)) {
       as_phylo(data)
     } else if (is.list(data)) {
@@ -19,28 +26,69 @@ fortify_cellpop = function(model, data, ...) {
     } else {
       stop("Unknown class(data): ", class(data))
     }
-    data %>%
-      ggtree::fortify() %>%
-      dplyr::left_join(meta_info, by = "node")
+    ggtree::fortify(data)
 }
 
 #' @description
-#' `plot_driver` draws tbl_tree.
-#' @param verbose add verbose information
+#' `plot_tree` draws tbl_tree.
+#' @param colour column to colorcode
 #' @rdname plot
 #' @export
-plot_driver = function(data, verbose = FALSE) {
-  p = ggplot2::ggplot(data, ggplot2::aes_(~x, ~y)) +
-    ggtree::geom_tree(ggplot2::aes_(colour = ~group)) +
-    ggplot2::theme_void() +
-    ggplot2::theme(legend.position = "none")
-  if (verbose) {
-    p = p +
-      ggplot2::geom_point(ggplot2::aes_(alpha = ~-log10(p_driver), colour = ~group), size = 2) +
-      ggtree::geom_text2(ggplot2::aes_(label = ~paste0(node, ":", label)), hjust=-.1, colour = '#666666') +
-      ggtree::geom_text2(ggplot2::aes_(label = ~sprintf('%.02g', p_driver)), hjust=1.1) +
-      ggplot2::scale_x_continuous(expand = ggplot2::expand_scale(mult = c(0.06, 0.16))) +
-      ggplot2::scale_alpha(range = c(0, 1), guide = FALSE)
-  }
-  p
+plot_tree = function(data, colour = "group") {
+  ggplot2::ggplot(data, ggplot2::aes_(~x, ~y)) +
+    ggtree::geom_tree(aes_try_string(data, colour = colour))
+}
+
+#' @description
+#' `geom_nodename` annotates tree nodes.
+#' @rdname plot
+#' @export
+geom_nodename = function() {
+  list(
+    ggtree::geom_text2(ggplot2::aes_(label = ~paste0(node, ":", dplyr::coalesce(label, ""))), hjust=-.1, colour = '#666666'),
+    ggplot2::scale_x_continuous(expand = ggplot2::expand_scale(mult = c(0.06, 0.16)))
+  )
+}
+
+#' @description
+#' `geom_driver` annotates driver mutations.
+#' @rdname plot
+#' @export
+geom_driver = function() {
+  list(
+    ggplot2::geom_point(ggplot2::aes_(alpha = ~-log10(p_driver)), size = 2),
+    ggtree::geom_text2(ggplot2::aes_(label = ~sprintf('%.02g', p_driver)), hjust=1.1),
+    ggplot2::scale_alpha(range = c(0.05, 1), guide = FALSE, na.value = 0)
+  )
+}
+
+plot_tree_dev = function(data) {
+  plot_tree(data) +
+  geom_nodename() +
+  geom_driver() +
+  ggplot2::theme(legend.position = "none")
+}
+
+aes_try = function(.data, ...) {
+  .aes_try_impl(ggplot2::aes, .data, ...)
+}
+
+aes_try_ = function(.data, ...) {
+  .aes_try_impl(ggplot2::aes_, .data, ...)
+}
+
+aes_try_string = function(.data, ...) {
+  .aes_try_impl(ggplot2::aes_string, .data, ...)
+}
+
+.aes_try_impl = function(.function, .data, ...) {
+  out = .function(...)
+  is_ok = vapply(out, function(.x) {
+    .x = rlang::quo_set_env(.x, emptyenv())
+    tryCatch(
+      {rlang::eval_tidy(.x, data = .data); TRUE},
+      error = function(e) FALSE
+    )
+  }, logical(1L))
+  out[is_ok]
 }

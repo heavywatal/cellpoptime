@@ -2,15 +2,26 @@
 % Please edit documentation in R/driver.R
 \name{detect_driver}
 \alias{detect_driver}
+\alias{filter_origins}
 \title{Functions for detecting driver mutations
 \code{detect_driver} returns a vector of p-values.}
 \usage{
-detect_driver(x)
+detect_driver(v)
+
+filter_origins(x, method = "fdr", q = 0.05)
 }
 \arguments{
-\item{x}{a pair of branch lengths (number of mutations)}
+\item{v}{a pair of branch lengths (number of mutations)}
+
+\item{x}{scaled tbl_tree}
+
+\item{method}{passed to \code{p.adjust()}}
+
+\item{q}{threshold}
 }
 \description{
 Functions for detecting driver mutations
 \code{detect_driver} returns a vector of p-values.
+
+\code{filter_origins} filters candidate origins by adjusted p-values.
 }
