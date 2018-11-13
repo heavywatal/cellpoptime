@@ -3,12 +3,15 @@
 \name{detect_driver}
 \alias{detect_driver}
 \alias{filter_origins}
+\alias{mutant_labels}
 \title{Functions for detecting driver mutations
 \code{detect_driver} returns a vector of p-values.}
 \usage{
 detect_driver(v)
 
 filter_origins(x, method = "fdr", q = 0.05)
+
+mutant_labels(x)
 }
 \arguments{
 \item{v}{a pair of branch lengths (number of mutations)}
@@ -20,8 +23,5 @@ filter_origins(x, method = "fdr", q = 0.05)
 \item{q}{threshold}
 }
 \description{
-Functions for detecting driver mutations
-\code{detect_driver} returns a vector of p-values.
-
-\code{filter_origins} filters candidate origins by adjusted p-values.
+\code{mutant_labels} extracts mutated nodes in tbl_tree
 }
