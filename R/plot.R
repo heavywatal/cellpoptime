@@ -4,10 +4,9 @@
 #' `fortify_cellpop` prepares plottable data.frame.
 #' @param model output of `scale_branches()`
 #' @param data tbl_tree
-#' @param ... unused
 #' @rdname plot
 #' @export
-fortify_cellpop = function(model, data, ...) {
+fortify_cellpop = function(model, data) {
     if (missing(data)) data = model
     mutant = filter_origins(model)$node
     meta_info = group_clade(model, mutant) %>%
@@ -31,12 +30,12 @@ ggtree_fortify = function(data) {
 
 #' @description
 #' `plot_tree` draws tbl_tree.
-#' @param colour column to colorcode
+#' @param ... passed to `ggtree::geom_tree()` aes mapping
 #' @rdname plot
 #' @export
-plot_tree = function(data, colour = "group") {
+plot_tree = function(data, ...) {
   ggplot2::ggplot(data, ggplot2::aes_(~x, ~y)) +
-    ggtree::geom_tree(aes_try_string(data, colour = colour))
+    ggtree::geom_tree(mapping = ggplot2::aes_(colour = ~try_null(group), ...))
 }
 
 #' @description
@@ -69,26 +68,4 @@ plot_tree_dev = function(data) {
   ggplot2::theme(legend.position = "none")
 }
 
-aes_try = function(.data, ...) {
-  .aes_try_impl(ggplot2::aes, .data, ...)
-}
-
-aes_try_ = function(.data, ...) {
-  .aes_try_impl(ggplot2::aes_, .data, ...)
-}
-
-aes_try_string = function(.data, ...) {
-  .aes_try_impl(ggplot2::aes_string, .data, ...)
-}
-
-.aes_try_impl = function(.function, .data, ...) {
-  out = .function(...)
-  is_ok = vapply(out, function(.x) {
-    .x = rlang::quo_set_env(.x, emptyenv())
-    tryCatch(
-      {rlang::eval_tidy(.x, data = .data); TRUE},
-      error = function(e) FALSE
-    )
-  }, logical(1L))
-  out[is_ok]
-}
+try_null = function(...) tryCatch(..., error = function(e) NULL)

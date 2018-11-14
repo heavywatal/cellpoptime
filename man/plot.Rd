@@ -7,9 +7,9 @@
 \alias{geom_driver}
 \title{Functions for visualization}
 \usage{
-fortify_cellpop(model, data, ...)
+fortify_cellpop(model, data)
 
-plot_tree(data, colour = "group")
+plot_tree(data, ...)
 
 geom_nodename()
 
@@ -20,9 +20,7 @@ geom_driver()
 
 \item{data}{tbl_tree}
 
-\item{...}{unused}
-
-\item{colour}{column to colorcode}
+\item{...}{passed to \code{ggtree::geom_tree()} aes mapping}
 }
 \description{
 \code{fortify_cellpop} prepares plottable data.frame.
