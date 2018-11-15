@@ -3,6 +3,8 @@
 export(as_multiphylo)
 export(as_phylo)
 export(detect_driver)
+export(false_negative)
+export(false_positive)
 export(filter_origins)
 export(filter_scale_tips)
 export(fortify_cellpop)
