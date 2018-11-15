@@ -69,3 +69,16 @@ plot_tree_dev = function(data) {
 }
 
 try_null = function(...) tryCatch(..., error = function(e) NULL)
+
+annotate_node = function(p, node, shape=15, size=4, colour='orange', after = 0L) {
+  f = function(x) dplyr::filter(x, .data$node == !!node)
+  insert_layer(p, ggplot2::geom_point(data = f, shape=shape, size=size, colour=colour), after = after)
+}
+
+insert_layer = function(p, ..., after = 0L) {
+  if (after < 0L) {
+    after = length(p$layers) + after
+  }
+  p$layers = append(p$layers, list(...), after = after)
+  p
+}
