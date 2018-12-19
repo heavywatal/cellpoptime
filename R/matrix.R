@@ -17,7 +17,7 @@ infer_rooted_tree = function(mtrx) {
     stats::dist(method = "manhattan") %>%
     ape::fastme.bal() %>%
     ape::root("0") %>%
-    tidytree::as_data_frame()
+    tidytree::as_tibble()
 }
 
 add_outgroup = function(mtrx) {

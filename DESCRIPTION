@@ -20,7 +20,7 @@ Imports:
   rlang,
   stringr,
   tidyr,
-  tidytree
+  tidytree (>= 0.2.0)
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
 RoxygenNote: 6.1.1
