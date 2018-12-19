@@ -55,9 +55,9 @@ geom_nodename = function() {
 #' @export
 geom_driver = function() {
   list(
-    ggplot2::geom_point(ggplot2::aes_(alpha = ~-log10(p_driver)), size = 2),
+    ggplot2::geom_point(ggplot2::aes_(alpha = ~pmin(-log10(p_driver), 6)), size = 2),
     ggtree::geom_text2(ggplot2::aes_(label = ~sprintf('%.02g', p_driver)), hjust=1.1),
-    ggplot2::scale_alpha(range = c(0.05, 1), guide = FALSE, na.value = 0)
+    ggplot2::scale_alpha(range = c(0.05, 1), limits = c(1, 6), guide = FALSE, na.value = 0)
   )
 }
 
