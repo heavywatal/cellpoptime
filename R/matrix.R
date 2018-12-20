@@ -27,7 +27,8 @@ add_outgroup = function(mtrx) {
 remove_outgroup = function(x) {
   if ("0" %in% x$label) {
     dplyr::filter(x, .data$label != "0" | is.na(.data$label)) %>%
-      dplyr::mutate(parent = .data$parent - 1L, node = .data$node - 1L)
+      dplyr::mutate(parent = .data$parent - 1L, node = .data$node - 1L) %>%
+      as_tbl_tree()
   } else {
     x
   }

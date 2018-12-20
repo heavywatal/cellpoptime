@@ -1,13 +1,21 @@
 #' Functions to process tidytree objects
 #'
 #' @details
+#' `as_tbl_tree` is a workaround until dplyr 0.8.0 is released.
+#' @param x data.frame
+#' @rdname tree
+#' @export
+as_tbl_tree = function(x) {
+  class(x) = c("tbl_tree", "tbl_df", "tbl", "data.frame")
+  x
+}
+
+#' @details
 #' `as_phylo` is a shortcut to convert data.frame to ape::phylo.
-#' @param x tbl_tree
 #' @rdname tree
 #' @export
 as_phylo = function(x) {
-  class(x) = c("tbl_tree", class(x))
-  tidytree::as.phylo(x)
+  tidytree::as.phylo(as_tbl_tree(x))
 }
 
 #' @details
@@ -27,8 +35,7 @@ as_multiphylo = function(tbls) {
 #' @rdname tree
 #' @export
 group_clade = function(x, node) {
-  class(x) = c("tbl_tree", class(x))
-  tidytree::groupClade(x, node)
+  tidytree::groupClade(as_tbl_tree(x), node)
 }
 
 #' @details

@@ -16,7 +16,8 @@ scale_branches = function(x) {
   }
   x %>%
     dplyr::select(-.data$children) %>%
-    dplyr::arrange(.data$node)
+    dplyr::arrange(.data$node) %>%
+    as_tbl_tree()
 }
 
 #' @details
@@ -37,7 +38,8 @@ scale_branches_record = function(x) {
     }
     .x %>%
       dplyr::select(-.data$children) %>%
-      dplyr::arrange(.data$node)
+      dplyr::arrange(.data$node) %>%
+      as_tbl_tree()
   })
 }
 
@@ -52,7 +54,8 @@ add_extra_columns = function(x) {
       term_length = 0,
       exp_sibs = 1, # expected number of sibling cells
       children = list(NULL)
-    )
+    ) %>%
+    as_tbl_tree()
 }
 
 #' @rdname scale

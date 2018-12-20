@@ -2,6 +2,7 @@
 
 export(as_multiphylo)
 export(as_phylo)
+export(as_tbl_tree)
 export(detect_driver)
 export(false_negative)
 export(false_positive)
