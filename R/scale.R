@@ -32,7 +32,7 @@ scale_branches_record = function(x) {
     x = nest_tippairs(x)
     l = c(l, list(x))
   }
-  purrr::map(l, ~{
+  purrr::map(l, ~ {
     while (nrow(.x) < num_edges) {
       .x = unnest_children(.x)
     }
@@ -84,15 +84,16 @@ filter_scale_tips = function(x) {
 nest_tippairs = function(x) {
   nested = filter_scale_tips(x) %>%
     dplyr::group_by(.data$parent, .data$term_length) %>%
-    tidyr::nest(.key="children")
+    tidyr::nest(.key = "children")
   x %>%
     dplyr::filter(is.na(.data$branch.length) | !.data$parent %in% nested$parent) %>%
-    dplyr::left_join(nested, by=c(node="parent"), suffix=c("", ".y")) %>%
+    dplyr::left_join(nested, by = c(node = "parent"), suffix = c("", ".y")) %>%
     dplyr::mutate(
       is_tip = .data$is_tip | .data$node %in% nested$parent,
-      term_length = pmax(.data$term_length, .data$term_length.y, na.rm=TRUE),
+      term_length = pmax(.data$term_length, .data$term_length.y, na.rm = TRUE),
       children = ifelse(purrr::map_lgl(.data$children, is.null), .data$children.y, .data$children),
-      term_length.y = NULL, children.y = NULL)
+      term_length.y = NULL, children.y = NULL
+    )
 }
 
 #' @rdname scale
@@ -102,20 +103,21 @@ unnest_children = function(x) {
     dplyr::transmute(
       parent = .data$node,
       parent_exp_sibs = .data$exp_sibs,
-      .data$children) %>%
+      .data$children
+    ) %>%
     dplyr::filter(!purrr::map_lgl(.data$children, is.null)) %>%
     tidyr::unnest() %>%
     dplyr::mutate(
       exp_sibs = .data$parent_exp_sibs * infer_sibs(.data$mutations),
       parent_exp_sibs = NULL
     )
-  .inner = x %>% dplyr::mutate(children=list(NULL))
+  .inner = x %>% dplyr::mutate(children = list(NULL))
   dplyr::bind_rows(.outer, .inner) %>%
     dplyr::mutate(is_tip = !is.na(.data$label))
 }
 
 infer_sibs = function(num_mutations) {
-  2 ** (num_mutations - 1)
+  2**(num_mutations - 1)
 }
 
 # Rescale descendant branches recursively

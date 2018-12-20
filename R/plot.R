@@ -7,25 +7,25 @@
 #' @rdname plot
 #' @export
 fortify_cellpop = function(model, data) {
-    if (missing(data)) data = model
-    mutant = filter_origins(model)$node
-    meta_info = group_clade(model, mutant) %>%
-      dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
-    ggtree_fortify(data) %>%
-      dplyr::left_join(meta_info, by = "node")
+  if (missing(data)) data = model
+  mutant = filter_origins(model)$node
+  meta_info = group_clade(model, mutant) %>%
+    dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
+  ggtree_fortify(data) %>%
+    dplyr::left_join(meta_info, by = "node")
 }
 
 #' @details
 #' `ggtree_fortify` prepares plottable data.frame.
 ggtree_fortify = function(data) {
-    data = if (is.data.frame(data)) {
-      as_phylo(data)
-    } else if (is.list(data)) {
-      as_multiphylo(data)
-    } else {
-      stop("Unknown class(data): ", class(data))
-    }
-    ggtree::fortify(data)
+  data = if (is.data.frame(data)) {
+    as_phylo(data)
+  } else if (is.list(data)) {
+    as_multiphylo(data)
+  } else {
+    stop("Unknown class(data): ", class(data))
+  }
+  ggtree::fortify(data)
 }
 
 #' @details
@@ -35,7 +35,7 @@ ggtree_fortify = function(data) {
 #' @export
 plot_tree = function(data, ...) {
   ggplot2::ggplot(data, ggplot2::aes_(~x, ~y)) +
-    ggtree::geom_tree(mapping = ggplot2::aes_(colour = ~try_null(group), ...))
+    ggtree::geom_tree(mapping = ggplot2::aes_(colour = ~ try_null(group), ...))
 }
 
 #' @details
@@ -44,7 +44,7 @@ plot_tree = function(data, ...) {
 #' @export
 geom_nodename = function() {
   list(
-    ggtree::geom_text2(ggplot2::aes_(label = ~paste0(node, ":", dplyr::coalesce(label, ""))), hjust=-.1, colour = '#666666'),
+    ggtree::geom_text2(ggplot2::aes_(label = ~ paste0(node, ":", dplyr::coalesce(label, ""))), hjust = -.1, colour = "#666666"),
     ggplot2::scale_x_continuous(expand = ggplot2::expand_scale(mult = c(0.06, 0.16)))
   )
 }
@@ -55,24 +55,24 @@ geom_nodename = function() {
 #' @export
 geom_driver = function() {
   list(
-    ggplot2::geom_point(ggplot2::aes_(alpha = ~pmin(-log10(p_driver), 6)), size = 2),
-    ggtree::geom_text2(ggplot2::aes_(label = ~sprintf('%.02g', p_driver)), hjust=1.1),
+    ggplot2::geom_point(ggplot2::aes_(alpha = ~ pmin(-log10(p_driver), 6)), size = 2),
+    ggtree::geom_text2(ggplot2::aes_(label = ~ sprintf("%.02g", p_driver)), hjust = 1.1),
     ggplot2::scale_alpha(range = c(0.05, 1), limits = c(1, 6), guide = FALSE, na.value = 0)
   )
 }
 
 plot_tree_dev = function(data) {
   plot_tree(data) +
-  geom_nodename() +
-  geom_driver() +
-  ggplot2::theme(legend.position = "none")
+    geom_nodename() +
+    geom_driver() +
+    ggplot2::theme(legend.position = "none")
 }
 
 try_null = function(...) tryCatch(..., error = function(e) NULL)
 
-annotate_node = function(p, node, shape=15, size=4, colour='orange', after = 0L) {
+annotate_node = function(p, node, shape = 15, size = 4, colour = "orange", after = 0L) {
   f = function(x) dplyr::filter(x, .data$node == !!node)
-  insert_layer(p, ggplot2::geom_point(data = f, shape=shape, size=size, colour=colour), after = after)
+  insert_layer(p, ggplot2::geom_point(data = f, shape = shape, size = size, colour = colour), after = after)
 }
 
 insert_layer = function(p, ..., after = 0L) {

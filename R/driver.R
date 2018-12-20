@@ -6,7 +6,7 @@
 #' @rdname driver
 #' @export
 detect_driver = function(v) {
-  stats::ppois(v, min(v), lower.tail=FALSE)
+  stats::ppois(v, min(v), lower.tail = FALSE)
 }
 
 #' @details
