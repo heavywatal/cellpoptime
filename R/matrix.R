@@ -1,6 +1,6 @@
 #' Functions for genotype matrix
 #'
-#' @description
+#' @details
 #' `infer_tree` infers a phylogenetic tree from sampled genotypes.
 #' @param mtrx integer matrix; rows are samples, columns are sites.
 #' @rdname matrix

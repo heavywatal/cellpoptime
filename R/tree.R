@@ -1,6 +1,6 @@
 #' Functions to process tidytree objects
 #'
-#' @description
+#' @details
 #' `as_phylo` is a shortcut to convert data.frame to ape::phylo.
 #' @param x tbl_tree
 #' @rdname tree
@@ -10,7 +10,7 @@ as_phylo = function(x) {
   tidytree::as.phylo(x)
 }
 
-#' @description
+#' @details
 #' `as_multiphylo` adds class name.
 #' @param tbls list of tbl_tree
 #' @rdname tree
@@ -21,7 +21,7 @@ as_multiphylo = function(tbls) {
   tbls
 }
 
-#' @description
+#' @details
 #' `group_clade` is a shortcut to apply `tidytree::groupClade` to data.frame.
 #' @param node ancestral node
 #' @rdname tree
@@ -31,7 +31,7 @@ group_clade = function(x, node) {
   tidytree::groupClade(x, node)
 }
 
-#' @description
+#' @details
 #' `upstream_corner` finds the joint between a node and its parent
 #' @rdname tree
 #' @export

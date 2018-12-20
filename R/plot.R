@@ -1,6 +1,6 @@
 #' Functions for visualization
 #'
-#' @description
+#' @details
 #' `fortify_cellpop` prepares plottable data.frame.
 #' @param model output of `scale_branches()`
 #' @param data tbl_tree
@@ -15,7 +15,7 @@ fortify_cellpop = function(model, data) {
       dplyr::left_join(meta_info, by = "node")
 }
 
-#' @description
+#' @details
 #' `ggtree_fortify` prepares plottable data.frame.
 ggtree_fortify = function(data) {
     data = if (is.data.frame(data)) {
@@ -28,7 +28,7 @@ ggtree_fortify = function(data) {
     ggtree::fortify(data)
 }
 
-#' @description
+#' @details
 #' `plot_tree` draws tbl_tree.
 #' @param ... passed to `ggtree::geom_tree()` aes mapping
 #' @rdname plot
@@ -38,7 +38,7 @@ plot_tree = function(data, ...) {
     ggtree::geom_tree(mapping = ggplot2::aes_(colour = ~try_null(group), ...))
 }
 
-#' @description
+#' @details
 #' `geom_nodename` annotates tree nodes.
 #' @rdname plot
 #' @export
@@ -49,7 +49,7 @@ geom_nodename = function() {
   )
 }
 
-#' @description
+#' @details
 #' `geom_driver` annotates driver mutations.
 #' @rdname plot
 #' @export

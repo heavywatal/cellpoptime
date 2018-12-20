@@ -23,6 +23,9 @@ upstream_corner(x, node)
 \item{node}{ancestral node}
 }
 \description{
+Functions to process tidytree objects
+}
+\details{
 \code{as_phylo} is a shortcut to convert data.frame to ape::phylo.
 
 \code{as_multiphylo} adds class name.

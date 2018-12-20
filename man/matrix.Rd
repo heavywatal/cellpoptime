@@ -10,5 +10,8 @@ infer_tree(mtrx)
 \item{mtrx}{integer matrix; rows are samples, columns are sites.}
 }
 \description{
+Functions for genotype matrix
+}
+\details{
 \code{infer_tree} infers a phylogenetic tree from sampled genotypes.
 }

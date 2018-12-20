@@ -4,8 +4,7 @@
 \alias{detect_driver}
 \alias{filter_origins}
 \alias{mutant_labels}
-\title{Functions for detecting driver mutations
-\code{detect_driver} returns a vector of p-values.}
+\title{Functions for detecting driver mutations}
 \usage{
 detect_driver(v)
 
@@ -23,5 +22,12 @@ mutant_labels(x)
 \item{q}{threshold}
 }
 \description{
+Functions for detecting driver mutations
+}
+\details{
+\code{detect_driver} returns a vector of p-values.
+
+\code{filter_origins} filters candidate origins by adjusted p-values.
+
 \code{mutant_labels} extracts mutated nodes in tbl_tree
 }

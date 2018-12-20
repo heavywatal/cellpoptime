@@ -23,6 +23,9 @@ geom_driver()
 \item{...}{passed to \code{ggtree::geom_tree()} aes mapping}
 }
 \description{
+Functions for visualization
+}
+\details{
 \code{fortify_cellpop} prepares plottable data.frame.
 
 \code{plot_tree} draws tbl_tree.
