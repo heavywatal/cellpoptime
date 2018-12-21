@@ -1,35 +1,8 @@
 #' Functions for visualization
 #'
 #' @details
-#' `fortify_cellpop` prepares plottable data.frame.
-#' @param model output of `scale_branches()`
-#' @param data tbl_tree
-#' @rdname plot
-#' @export
-fortify_cellpop = function(model, data) {
-  if (missing(data)) data = model
-  mutant = filter_origins(model)$node
-  meta_info = group_clade(model, mutant) %>%
-    dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
-  ggtree_fortify(data) %>%
-    dplyr::left_join(meta_info, by = "node")
-}
-
-#' @details
-#' `ggtree_fortify` prepares plottable data.frame.
-ggtree_fortify = function(data) {
-  data = if (is.data.frame(data)) {
-    as_phylo(data)
-  } else if (is.list(data)) {
-    as_multiphylo(data)
-  } else {
-    stop("Unknown class(data): ", class(data))
-  }
-  ggtree::fortify(data)
-}
-
-#' @details
 #' `plot_tree` draws tbl_tree.
+#' @param data tbl_tree
 #' @param ... passed to `ggtree::geom_tree()` aes mapping
 #' @rdname plot
 #' @export
