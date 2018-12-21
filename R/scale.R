@@ -48,7 +48,7 @@ add_extra_columns = function(x) {
   x %>%
     dplyr::arrange(.data$parent) %>%
     dplyr::mutate(
-      is_tip = !is.na(.data$label),
+      is_tip = !(.data$node %in% .data$parent),
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
