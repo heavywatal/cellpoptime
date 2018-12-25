@@ -5,7 +5,7 @@
 \alias{ggtree_fortify}
 \title{Convert tbl_tree to plottable data.frame}
 \usage{
-fortify_cellpop(model, data)
+fortify_cellpop(model, data, method = "fdr", q = 0.05)
 
 ggtree_fortify(data)
 }
@@ -13,6 +13,10 @@ ggtree_fortify(data)
 \item{model}{output of \code{scale_branches()}}
 
 \item{data}{tbl_tree}
+
+\item{method}{passed to \code{p.adjust()}}
+
+\item{q}{threshold}
 }
 \description{
 Convert tbl_tree to plottable data.frame

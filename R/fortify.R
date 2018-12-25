@@ -4,11 +4,12 @@
 #' `fortify_cellpop` prepares plottable data.frame.
 #' @param model output of `scale_branches()`
 #' @param data tbl_tree
+#' @inheritParams filter_origins
 #' @rdname fortify
 #' @export
-fortify_cellpop = function(model, data) {
+fortify_cellpop = function(model, data, method = "fdr", q = 0.05) {
   if (missing(data)) data = model
-  mutant = filter_origins(model)$node
+  mutant = filter_origins(model, method = method, q = q)$node
   meta_info = group_clade(model, mutant) %>%
     dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
   ggtree_fortify(data) %>%
