@@ -1,3 +1,11 @@
+detect_driver_pois = function(v) {
+  stats::ppois(v, min(v), lower.tail = FALSE)
+}
+
+detect_driver_binom = function(v) {
+  stats::pbinom(v, sum(v), 0.5, lower.tail = FALSE)
+}
+
 #' Functions for detecting driver mutations
 #
 #' @details
@@ -5,9 +13,7 @@
 #' @param v a pair of branch lengths (number of mutations)
 #' @rdname driver
 #' @export
-detect_driver = function(v) {
-  stats::ppois(v, min(v), lower.tail = FALSE)
-}
+detect_driver = detect_driver_pois
 
 #' @details
 #' `filter_origins` filters candidate origins by adjusted p-values.
