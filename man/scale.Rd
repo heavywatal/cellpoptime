@@ -8,18 +8,20 @@
 \alias{unnest_children}
 \title{Scale branches}
 \usage{
-scale_branches(x)
+scale_branches(x, detector = detect_driver_pois)
 
 scale_branches_record(x)
 
-filter_scale_tips(x)
+filter_scale_tips(x, detector)
 
-nest_tippairs(x)
+nest_tippairs(x, detector)
 
 unnest_children(x)
 }
 \arguments{
 \item{x}{data.frame}
+
+\item{detector}{function}
 }
 \description{
 Scale branches

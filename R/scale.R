@@ -3,13 +3,14 @@
 #' @details
 #' `scale_branches` is a shortcut.
 #' @param x data.frame
+#' @param detector function
 #' @rdname scale
 #' @export
-scale_branches = function(x) {
+scale_branches = function(x, detector = detect_driver_pois) {
   x = add_extra_columns(x)
   num_edges = nrow(x)
   while (nrow(x) > 1L) {
-    x = nest_tippairs(x)
+    x = nest_tippairs(x, detector = detector)
   }
   while (nrow(x) < num_edges) {
     x = unnest_children(x)
@@ -60,14 +61,14 @@ add_extra_columns = function(x) {
 
 #' @rdname scale
 #' @export
-filter_scale_tips = function(x) {
+filter_scale_tips = function(x, detector) {
   x %>%
     dplyr::filter(.data$is_tip) %>%
     dplyr::mutate(total_length = .data$branch.length + .data$term_length) %>%
     dplyr::group_by(.data$parent) %>%
     dplyr::filter(dplyr::n() > 1L) %>%
     dplyr::mutate(
-      p_driver = detect_driver(.data$total_length),
+      p_driver = detector(.data$total_length),
       term_length = min(.data$total_length),
     ) %>%
     dplyr::ungroup() %>%
@@ -81,8 +82,8 @@ filter_scale_tips = function(x) {
 
 #' @rdname scale
 #' @export
-nest_tippairs = function(x) {
-  nested = filter_scale_tips(x) %>%
+nest_tippairs = function(x, detector) {
+  nested = filter_scale_tips(x, detector = detector) %>%
     dplyr::group_by(.data$parent, .data$term_length) %>%
     tidyr::nest(.key = "children")
   x %>%
