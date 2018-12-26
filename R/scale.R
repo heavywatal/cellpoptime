@@ -62,22 +62,24 @@ add_extra_columns = function(x) {
 #' @rdname scale
 #' @export
 filter_scale_tips = function(x, detector) {
+  n = dplyr::n
   x %>%
     dplyr::filter(.data$is_tip) %>%
     dplyr::mutate(total_length = .data$branch.length + .data$term_length) %>%
     dplyr::group_by(.data$parent) %>%
-    dplyr::filter(dplyr::n() > 1L) %>%
+    dplyr::filter(n() > 1L) %>%
     dplyr::mutate(
-      p_driver = detector(.data$total_length),
-      term_length = min(.data$total_length),
+      p_driver = detector(!!as.name("total_length")),
+      term_length = min(!!as.name("total_length")),
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       scale = .data$term_length / .data$total_length,
       branch.length = .data$branch.length * .data$scale,
-      children = purrr::map2(.data$children, .data$scale, rescale_descendants)
-    ) %>%
-    dplyr::select(-.data$scale, -.data$total_length)
+      children = purrr::map2(.data$children, .data$scale, rescale_descendants),
+      scale = NULL,
+      total_length = NULL
+    )
 }
 
 #' @rdname scale
