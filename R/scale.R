@@ -101,15 +101,13 @@ nest_tippairs = function(x, detector) {
 #' @rdname scale
 #' @export
 unnest_children = function(x) {
-  .outer = x %>%
-    dplyr::transmute(
-      parent = .data$node,
-      .data$children
-    ) %>%
-    dplyr::filter(!purrr::map_lgl(.data$children, is.null)) %>%
-    tidyr::unnest()
-  .inner = x %>% dplyr::mutate(children = list(NULL))
-  dplyr::bind_rows(.outer, .inner) %>%
+  idx = !purrr::map_lgl(x$children, is.null)
+  .outer = tibble::tibble(
+    parent = x$node[idx],
+    data = x$children[idx]
+  )
+  .inner = dplyr::mutate(x, children = list(NULL))
+  dplyr::bind_rows(tidyr::unnest(.outer), .inner) %>%
     dplyr::mutate(is_tip = !is.na(.data$label))
 }
 
