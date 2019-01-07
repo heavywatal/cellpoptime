@@ -53,7 +53,6 @@ add_extra_columns = function(x) {
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
-      exp_sibs = 1, # expected number of sibling cells
       children = list(NULL)
     ) %>%
     as_tbl_tree()
@@ -105,22 +104,13 @@ unnest_children = function(x) {
   .outer = x %>%
     dplyr::transmute(
       parent = .data$node,
-      parent_exp_sibs = .data$exp_sibs,
       .data$children
     ) %>%
     dplyr::filter(!purrr::map_lgl(.data$children, is.null)) %>%
-    tidyr::unnest() %>%
-    dplyr::mutate(
-      exp_sibs = .data$parent_exp_sibs * infer_sibs(.data$mutations),
-      parent_exp_sibs = NULL
-    )
+    tidyr::unnest()
   .inner = x %>% dplyr::mutate(children = list(NULL))
   dplyr::bind_rows(.outer, .inner) %>%
     dplyr::mutate(is_tip = !is.na(.data$label))
-}
-
-infer_sibs = function(num_mutations) {
-  2**(num_mutations - 1)
 }
 
 # Rescale descendant branches recursively
