@@ -11,7 +11,7 @@ fortify_cellpop = function(model, data, method = "fdr", q = 0.05) {
   if (missing(data)) data = model
   mutant = filter_origins(model, method = method, q = q)$node
   meta_info = group_clade(model, mutant) %>%
-    dplyr::select(.data$node, .data$mutations, .data$exp_sibs, .data$p_driver, .data$group)
+    dplyr::select(.data$node, .data$mutations, .data$p_driver, .data$group)
   ggtree_fortify(data) %>%
     dplyr::left_join(meta_info, by = "node")
 }
