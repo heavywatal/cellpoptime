@@ -33,7 +33,7 @@ filter_origins = function(x, method = "fdr", q = 0.05) {
 mutant_labels = function(x) {
   origins = filter_origins(x)$node
   group_clade(x, origins) %>%
-    dplyr::filter(.data$is_tip, .data$group != 0L) %>%
+    dplyr::filter(.data$isTip, .data$group != 0L) %>%
     dplyr::pull("label") %>%
     as.integer()
 }

@@ -49,7 +49,7 @@ add_extra_columns = function(x) {
   x %>%
     dplyr::arrange(.data$parent) %>%
     dplyr::mutate(
-      is_tip = !(.data$node %in% .data$parent),
+      isTip = !(.data$node %in% .data$parent),
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
       term_length = 0,
@@ -63,7 +63,7 @@ add_extra_columns = function(x) {
 filter_scale_tips = function(x, detector) {
   n = dplyr::n
   x %>%
-    dplyr::filter(.data$is_tip) %>%
+    dplyr::filter(.data$isTip) %>%
     dplyr::mutate(total_length = .data$branch.length + .data$term_length) %>%
     dplyr::group_by(.data$parent) %>%
     dplyr::filter(n() > 1L) %>%
@@ -91,7 +91,7 @@ nest_tippairs = function(x, detector) {
     dplyr::filter(is.na(.data$branch.length) | !.data$parent %in% nested$parent) %>%
     dplyr::left_join(nested, by = c(node = "parent"), suffix = c("", ".y")) %>%
     dplyr::mutate(
-      is_tip = .data$is_tip | .data$node %in% nested$parent,
+      isTip = .data$isTip | .data$node %in% nested$parent,
       term_length = pmax(.data$term_length, .data$term_length.y, na.rm = TRUE),
       children = ifelse(purrr::map_lgl(.data$children, is.null), .data$children.y, .data$children),
       term_length.y = NULL, children.y = NULL
@@ -108,7 +108,7 @@ unnest_children = function(x) {
   )
   .inner = dplyr::mutate(x, children = list(NULL))
   dplyr::bind_rows(tidyr::unnest(.outer), .inner) %>%
-    dplyr::mutate(is_tip = !is.na(.data$label))
+    dplyr::mutate(isTip = !is.na(.data$label))
 }
 
 # Rescale descendant branches recursively
