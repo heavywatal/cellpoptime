@@ -16,7 +16,7 @@ scale_branches = function(x, detector = detect_driver_pois) {
     x = unnest_children(x)
   }
   x %>%
-    dplyr::select(-.data$children) %>%
+    dplyr::select(-.data$children, -.data$term_length) %>%
     dplyr::arrange(.data$node) %>%
     as_tbl_tree()
 }
@@ -38,7 +38,7 @@ scale_branches_record = function(x) {
       .x = unnest_children(.x)
     }
     .x %>%
-      dplyr::select(-.data$children) %>%
+      dplyr::select(-.data$children, -.data$term_length) %>%
       dplyr::arrange(.data$node) %>%
       as_tbl_tree()
   })
