@@ -3,11 +3,14 @@
 \name{fortify_cellpop}
 \alias{fortify_cellpop}
 \alias{ggtree_fortify}
+\alias{fortify_rect}
 \title{Convert tbl_tree to plottable data.frame}
 \usage{
 fortify_cellpop(model, data, method = "fdr", q = 0.05)
 
 ggtree_fortify(data)
+
+fortify_rect(data)
 }
 \arguments{
 \item{model}{output of \code{scale_branches()}}
@@ -24,5 +27,7 @@ Convert tbl_tree to plottable data.frame
 \details{
 \code{fortify_cellpop} prepares plottable data.frame.
 
-\code{ggtree_fortify} prepares plottable data.frame.
+\code{ggtree_fortify} is a wrapper of \code{ggtree::fortify}.
+
+\code{fortify_rect} calculates x-y coordinates in rectangular layout.
 }

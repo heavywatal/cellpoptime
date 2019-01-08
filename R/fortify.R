@@ -12,12 +12,12 @@ fortify_cellpop = function(model, data, method = "fdr", q = 0.05) {
   mutant = filter_origins(model, method = method, q = q)$node
   meta_info = group_clade(model, mutant) %>%
     dplyr::select(.data$node, .data$mutations, .data$p_driver, .data$group)
-  ggtree_fortify(data) %>%
+  fortify_rect(data) %>%
     dplyr::left_join(meta_info, by = "node")
 }
 
 #' @details
-#' `ggtree_fortify` prepares plottable data.frame.
+#' `ggtree_fortify` is a wrapper of `ggtree::fortify`.
 #' @rdname fortify
 #' @export
 ggtree_fortify = function(data) {
@@ -29,6 +29,21 @@ ggtree_fortify = function(data) {
     stop("Unknown class(data): ", class(data))
   }
   ggtree::fortify(data)
+}
+
+#' @details
+#' `fortify_rect` calculates x-y coordinates in rectangular layout.
+#' @rdname fortify
+#' @export
+fortify_rect = function(data) {
+  if (is.data.frame(data)) {
+    add_xy_coord(data)
+  } else if (is.list(data)) {
+    if (is.null(names(data))) names(data) = paste0("Tree #", seq_along(data))
+    purrr::map_dfr(data, add_xy_coord, .id = ".id")
+  } else {
+    stop("Unknown class(data): ", class(data))
+  }
 }
 
 add_xy_coord = function(data, ladderize = TRUE) {
