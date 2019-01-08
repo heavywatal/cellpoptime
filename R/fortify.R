@@ -2,17 +2,18 @@
 #'
 #' @details
 #' `fortify_cellpop` prepares plottable data.frame.
+#' @param ... passed to `layout_rect` or `ggtree::fortify`.
 #' @param model output of `scale_branches()`
 #' @param data tbl_tree
 #' @inheritParams filter_origins
 #' @rdname fortify
 #' @export
-fortify_cellpop = function(model, data, method = "fdr", q = 0.05) {
+fortify_cellpop = function(model, data, ..., method = "fdr", q = 0.05) {
   if (missing(data)) data = model
   mutant = filter_origins(model, method = method, q = q)$node
   meta_info = group_clade(model, mutant) %>%
     dplyr::select(.data$node, .data$mutations, .data$p_driver, .data$group)
-  fortify_rect(data) %>%
+  layout_rect(data) %>%
     dplyr::left_join(meta_info, by = "node")
 }
 
@@ -20,7 +21,7 @@ fortify_cellpop = function(model, data, method = "fdr", q = 0.05) {
 #' `ggtree_fortify` is a wrapper of `ggtree::fortify`.
 #' @rdname fortify
 #' @export
-ggtree_fortify = function(data) {
+ggtree_fortify = function(data, ...) {
   data = if (is.data.frame(data)) {
     as_phylo(data)
   } else if (is.list(data)) {
@@ -28,25 +29,28 @@ ggtree_fortify = function(data) {
   } else {
     stop("Unknown class(data): ", class(data))
   }
-  ggtree::fortify(data)
+  ggtree::fortify(data, ...)
 }
 
 #' @details
-#' `fortify_rect` calculates x-y coordinates in rectangular layout.
+#' `layout_rect` is a simplified version of `ggtree::fortify`,
+#' whose output lacks "branch" and "angle" columns.
+#' @param ladderize Use `ape::ladderize` or not.
 #' @rdname fortify
 #' @export
-fortify_rect = function(data) {
-  if (is.data.frame(data)) {
-    add_xy_coord(data)
-  } else if (is.list(data)) {
-    if (is.null(names(data))) names(data) = paste0("Tree #", seq_along(data))
-    purrr::map_dfr(data, add_xy_coord, .id = ".id")
-  } else {
-    stop("Unknown class(data): ", class(data))
-  }
+layout_rect = function(data, ladderize = TRUE, ...) UseMethod("layout_rect")
+
+#' @rdname fortify
+#' @export
+layout_rect.list = function(data, ladderize = TRUE, ...) {
+  if (is.null(names(data))) names(data) = paste0("Tree #", seq_along(data))
+  purrr::map_dfr(data, layout_rect, ladderize = ladderize, .id = ".id")
 }
 
-add_xy_coord = function(data, ladderize = TRUE) {
+#' @rdname fortify
+#' @export
+layout_rect.data.frame = function(data, ladderize = TRUE, ...) {
+  data$isTip = !(data$node %in% data$parent)
   data = add_x_coord(data)
   if (ladderize) {
     data = .ladderize(data)
