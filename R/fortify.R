@@ -14,7 +14,8 @@ fortify_cellpop = function(model, data, ..., method = "fdr", q = 0.05) {
   meta_info = group_clade(model, mutant) %>%
     dplyr::select(.data$node, .data$mutations, .data$p_driver, .data$group)
   layout_rect(data) %>%
-    dplyr::left_join(meta_info, by = "node")
+    dplyr::left_join(meta_info, by = "node", suffix = c(".x", "")) %>%
+    dplyr::select(-dplyr::ends_with(".x"))
 }
 
 #' @details
