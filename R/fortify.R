@@ -52,15 +52,14 @@ layout_rect.list = function(data, ladderize = TRUE, ...) {
 #' @export
 layout_rect.data.frame = function(data, ladderize = TRUE, ...) {
   data$isTip = !(data$node %in% data$parent)
-  data = add_x_coord(data)
-  if (ladderize) {
-    data = .ladderize(data)
-  }
-  add_y_coord(data)
+  data$x = get_x_coord(data)
+  data$y = get_y_coord(data, ladderize = ladderize)
+  data
 }
 
 # More efficient than ggtree::getYcoord for >200 tips
 get_x_coord = function(data) {
+  # assuming data$node == seq_len(NROW(data))
   len = dplyr::coalesce(data$branch.length, 0)
   x = numeric(length(len))
   nextnode = data$node
@@ -72,19 +71,17 @@ get_x_coord = function(data) {
   x
 }
 
-add_x_coord = function(data) {
-  data$x = get_x_coord(data)
-  data
-}
-
 # More efficient than ggtree::getYcoord for >2000 tips
-add_y_coord = function(data, step = 1) {
+get_y_coord = function(data, ladderize = TRUE, step = 1) {
   n = dplyr::n  # for speed and warning
+  if (ladderize) data = .ladderize(data)
+  data = data[, c("parent", "node")]
   num_tips = NROW(data) - sum(data$node %in% data$parent)
   current = seq_len(num_tips)
   data$y = NA_real_
   data$y[data$node <= num_tips] = current * step
   data = dplyr::arrange(data, .data$node)
+  # assuming data$node == seq_len(NROW(data))
   while (anyNA(data$y)) {
     df_pairs = data %>%
       dplyr::filter(.data$node %in% current) %>%
@@ -94,16 +91,11 @@ add_y_coord = function(data, step = 1) {
     data$y[df_new$parent] = df_new$y
     current = c(setdiff(current, df_pairs$node), df_new$parent)
   }
-  data
+  data$y
 }
 
 .ladderize = function(data, right = FALSE) {
   phylo = ape::ladderize(as_phylo(data), right = right)
   tibble::as_tibble(phylo$edge) %>%
     dplyr::full_join(data, by = c("parent", "node"))
-}
-
-# shortcut for fortify.phylo
-get_y_coord = function(data) {
-  add_y_coord(data)$y
 }
