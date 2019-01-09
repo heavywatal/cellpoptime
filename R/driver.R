@@ -1,5 +1,5 @@
 detect_driver_pois = function(v) {
-  stats::ppois(v, min(v), lower.tail = FALSE)
+  stats::ppois(v, mean(v), lower.tail = FALSE)
 }
 
 detect_driver_binom = function(v) {
