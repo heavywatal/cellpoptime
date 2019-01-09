@@ -56,7 +56,7 @@ add_extra_columns = function(x) {
       isTip = !(.data$node %in% .data$parent),
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
-      weight = as.integer(isTip),
+      weight = as.integer(.data$isTip),
       term_length = 0L,
       children = list(NULL)
     ) %>%
@@ -78,7 +78,7 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
       weight = ifelse(!!as.name("p_driver") > threshold, !!as.name("weight"), NA_real_),
       term_length = !!as.name("weight") * !!as.name("total_length"),
       weight = sum(!!as.name("weight"), na.rm = TRUE),
-      term_length = sum(term_length, na.rm = TRUE) / weight
+      term_length = sum(!!as.name("term_length"), na.rm = TRUE) / !!as.name("weight")
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
