@@ -124,13 +124,9 @@ unnest_children = function(x) {
 
 # Rescale descendant branches recursively
 rescale_descendants = function(x, scale) {
-  if (is.null(x) || scale == 1) {
-    x
-  } else {
-    dplyr::mutate(
-      x,
-      branch.length = .data$branch.length * scale,
-      children = purrr::map(.data$children, rescale_descendants, scale)
-    )
+  if (!is.null(x) && scale != 1) {
+    x$branch.length = x$branch.length * scale
+    x$children = purrr::map(x$children, rescale_descendants, scale = scale)
   }
+  x
 }
