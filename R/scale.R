@@ -12,6 +12,7 @@ scale_branches = function(x, detector = detect_driver_pois) {
   while (nrow(x) > 1L) {
     x = nest_tippairs(x, detector = detector)
   }
+  x$weight = NULL
   while (nrow(x) < num_edges) {
     x = unnest_children(x)
   }
@@ -33,6 +34,7 @@ scale_branches_record = function(x) {
     x = nest_tippairs(x)
     l = c(l, list(x))
   }
+  x$weight = NULL
   purrr::map(l, ~ {
     while (nrow(.x) < num_edges) {
       .x = unnest_children(.x)
@@ -52,7 +54,8 @@ add_extra_columns = function(x) {
       isTip = !(.data$node %in% .data$parent),
       mutations = .data$branch.length,
       branch.length = pmax(.data$branch.length, 0.01),
-      term_length = 0,
+      weight = as.integer(isTip),
+      term_length = 0L,
       children = list(NULL)
     ) %>%
     as_tbl_tree()
@@ -70,7 +73,10 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
     dplyr::filter(n() > 1L) %>%
     dplyr::mutate(
       p_driver = detector(!!as.name("total_length")),
-      term_length = mean(ifelse(!!as.name("p_driver") > threshold, !!as.name("total_length"), NA_real_), na.rm=TRUE),
+      weight = ifelse(!!as.name("p_driver") > threshold, !!as.name("weight"), NA_real_),
+      term_length = !!as.name("weight") * !!as.name("total_length"),
+      weight = sum(!!as.name("weight"), na.rm = TRUE),
+      term_length = sum(term_length, na.rm = TRUE) / weight
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
@@ -87,16 +93,17 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
 #' @export
 nest_tippairs = function(x, detector) {
   nested = filter_scale_tips(x, detector = detector) %>%
-    dplyr::group_by(.data$parent, .data$term_length) %>%
+    dplyr::group_by(.data$parent, .data$weight, .data$term_length) %>%
     tidyr::nest(.key = "children")
   x %>%
     dplyr::filter(is.na(.data$branch.length) | !.data$parent %in% nested$parent) %>%
     dplyr::left_join(nested, by = c(node = "parent"), suffix = c("", ".y")) %>%
     dplyr::mutate(
       isTip = .data$isTip | .data$node %in% nested$parent,
+      weight = pmax(.data$weight, .data$weight.y, na.rm = TRUE),
       term_length = pmax(.data$term_length, .data$term_length.y, na.rm = TRUE),
       children = ifelse(purrr::map_lgl(.data$children, is.null), .data$children.y, .data$children),
-      term_length.y = NULL, children.y = NULL
+      weight.y = NULL, term_length.y = NULL, children.y = NULL
     )
 }
 
