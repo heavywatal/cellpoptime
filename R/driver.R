@@ -2,6 +2,11 @@ detect_driver_pois = function(v) {
   stats::ppois(v, mean(v), lower.tail = FALSE)
 }
 
+detect_driver_norm = function(v) {
+  lambda = mean(v)
+  stats::pnorm(v, lambda, sqrt(lambda), lower.tail = FALSE)
+}
+
 detect_driver_binom = function(v) {
   v = round(v)
   stats::pbinom(v, sum(v), 0.5, lower.tail = FALSE)
