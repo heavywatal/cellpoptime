@@ -13,11 +13,12 @@ scale_branches = function(x, detector = detect_driver_pois) {
     x = nest_tippairs(x, detector = detector)
   }
   x$weight = NULL
+  x$term_length = NULL
   while (nrow(x) < num_edges) {
     x = unnest_children(x)
   }
   x %>%
-    dplyr::select(-.data$children, -.data$term_length) %>%
+    dplyr::select(-.data$children) %>%
     dplyr::arrange(.data$node) %>%
     as_tbl_tree()
 }
@@ -35,12 +36,13 @@ scale_branches_record = function(x) {
     l = c(l, list(x))
   }
   x$weight = NULL
+  x$term_length = NULL
   purrr::map(l, ~ {
     while (nrow(.x) < num_edges) {
       .x = unnest_children(.x)
     }
     .x %>%
-      dplyr::select(-.data$children, -.data$term_length) %>%
+      dplyr::select(-.data$children) %>%
       dplyr::arrange(.data$node) %>%
       as_tbl_tree()
   })
