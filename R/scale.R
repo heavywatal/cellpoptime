@@ -8,44 +8,24 @@
 #' @export
 scale_branches = function(x, detector = detect_driver_pois) {
   x = add_extra_columns(x)
-  num_edges = nrow(x)
   while (nrow(x) > 1L) {
     x = nest_tippairs(x, detector = detector)
   }
-  x$weight = NULL
-  x$term_length = NULL
-  while (nrow(x) < num_edges) {
-    x = unnest_children(x)
-  }
-  x %>%
-    dplyr::select(-.data$children) %>%
-    dplyr::arrange(.data$node) %>%
-    as_tbl_tree()
+  flatten_tbl_tree(x)
 }
 
 #' @details
 #' `scale_branches_record` records scaling process for explanation.
 #' @rdname scale
 #' @export
-scale_branches_record = function(x) {
+scale_branches_record = function(x, detector = detect_driver_pois) {
   x = add_extra_columns(x)
-  num_edges = nrow(x)
   l = list(x)
   while (nrow(x) > 1L) {
-    x = nest_tippairs(x)
-    l = c(l, list(x))
+    x = nest_tippairs(x, detector = detector)
+    l[[length(l) + 1L]] = x
   }
-  x$weight = NULL
-  x$term_length = NULL
-  purrr::map(l, ~ {
-    while (nrow(.x) < num_edges) {
-      .x = unnest_children(.x)
-    }
-    .x %>%
-      dplyr::select(-.data$children) %>%
-      dplyr::arrange(.data$node) %>%
-      as_tbl_tree()
-  })
+  purrr::map(l, flatten_tbl_tree)
 }
 
 # Prepare necessary columns for scaling
@@ -63,9 +43,6 @@ add_extra_columns = function(x) {
     as_tbl_tree()
 }
 
-#' @param threshold p-value
-#' @rdname scale
-#' @export
 filter_scale_tips = function(x, detector, threshold = 0.01) {
   n = dplyr::n
   x %>%
@@ -90,8 +67,6 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
     )
 }
 
-#' @rdname scale
-#' @export
 nest_tippairs = function(x, detector) {
   nested = filter_scale_tips(x, detector = detector) %>%
     dplyr::group_by(.data$parent, .data$weight, .data$term_length) %>%
@@ -103,22 +78,9 @@ nest_tippairs = function(x, detector) {
       isTip = .data$isTip | .data$node %in% nested$parent,
       weight = pmax(.data$weight, .data$weight.y, na.rm = TRUE),
       term_length = pmax(.data$term_length, .data$term_length.y, na.rm = TRUE),
-      children = ifelse(purrr::map_lgl(.data$children, is.null), .data$children.y, .data$children),
+      children = ifelse(.is_null(.data$children), .data$children.y, .data$children),
       weight.y = NULL, term_length.y = NULL, children.y = NULL
     )
-}
-
-#' @rdname scale
-#' @export
-unnest_children = function(x) {
-  idx = !purrr::map_lgl(x$children, is.null)
-  .outer = tibble::tibble(
-    parent = x$node[idx],
-    data = x$children[idx]
-  )
-  .inner = dplyr::mutate(x, children = list(NULL))
-  dplyr::bind_rows(tidyr::unnest(.outer), .inner) %>%
-    dplyr::mutate(isTip = !is.na(.data$label))
 }
 
 # Rescale descendant branches recursively
@@ -128,4 +90,32 @@ rescale_descendants = function(x, scale) {
     x$children = purrr::map(x$children, rescale_descendants, scale = scale)
   }
   x
+}
+
+flatten_tbl_tree = function(x) {
+  x$weight = NULL
+  x$term_length = NULL
+  x %>%
+    unnest_children() %>%
+    dplyr::arrange(.data$node) %>%
+    as_tbl_tree()
+}
+
+unnest_children = function(x) {
+  has_children = !.is_null(x$children)
+  if (any(has_children)) {
+    unnested = tidyr::unnest(tibble::tibble(
+      parent = x$node[has_children],
+      data = x$children[has_children]
+    ))
+    x$children = NULL
+    dplyr::bind_rows(unnest_children(unnested), x)
+  } else {
+    x$children = NULL
+    x
+  }
+}
+
+.is_null = function(x) {
+  vapply(x, is.null, FALSE, USE.NAMES = FALSE)
 }

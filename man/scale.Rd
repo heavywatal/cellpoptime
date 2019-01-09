@@ -3,27 +3,16 @@
 \name{scale_branches}
 \alias{scale_branches}
 \alias{scale_branches_record}
-\alias{filter_scale_tips}
-\alias{nest_tippairs}
-\alias{unnest_children}
 \title{Scale branches}
 \usage{
 scale_branches(x, detector = detect_driver_pois)
 
-scale_branches_record(x)
-
-filter_scale_tips(x, detector, threshold = 0.01)
-
-nest_tippairs(x, detector)
-
-unnest_children(x)
+scale_branches_record(x, detector = detect_driver_pois)
 }
 \arguments{
 \item{x}{data.frame}
 
 \item{detector}{function}
-
-\item{threshold}{p-value}
 }
 \description{
 Scale branches
