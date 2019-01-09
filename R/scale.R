@@ -83,7 +83,6 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
     dplyr::ungroup() %>%
     dplyr::mutate(
       scale = .data$term_length / .data$total_length,
-      term_length = as.integer(round(.data$term_length)),
       branch.length = .data$branch.length * .data$scale,
       children = purrr::map2(.data$children, .data$scale, rescale_descendants),
       scale = NULL,

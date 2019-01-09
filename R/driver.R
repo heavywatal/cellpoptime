@@ -3,6 +3,7 @@ detect_driver_pois = function(v) {
 }
 
 detect_driver_binom = function(v) {
+  v = round(v)
   stats::pbinom(v, sum(v), 0.5, lower.tail = FALSE)
 }
 
