@@ -12,7 +12,7 @@ scale_branches(x, detector = detect_driver_pois)
 
 scale_branches_record(x)
 
-filter_scale_tips(x, detector)
+filter_scale_tips(x, detector, threshold = 0.01)
 
 nest_tippairs(x, detector)
 
@@ -22,6 +22,8 @@ unnest_children(x)
 \item{x}{data.frame}
 
 \item{detector}{function}
+
+\item{threshold}{p-value}
 }
 \description{
 Scale branches

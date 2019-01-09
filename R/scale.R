@@ -58,9 +58,10 @@ add_extra_columns = function(x) {
     as_tbl_tree()
 }
 
+#' @param threshold p-value
 #' @rdname scale
 #' @export
-filter_scale_tips = function(x, detector) {
+filter_scale_tips = function(x, detector, threshold = 0.01) {
   n = dplyr::n
   x %>%
     dplyr::filter(.data$isTip) %>%
@@ -69,11 +70,12 @@ filter_scale_tips = function(x, detector) {
     dplyr::filter(n() > 1L) %>%
     dplyr::mutate(
       p_driver = detector(!!as.name("total_length")),
-      term_length = min(!!as.name("total_length")),
+      term_length = mean(ifelse(!!as.name("p_driver") > threshold, !!as.name("total_length"), NA_real_), na.rm=TRUE),
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       scale = .data$term_length / .data$total_length,
+      term_length = as.integer(round(.data$term_length)),
       branch.length = .data$branch.length * .data$scale,
       children = purrr::map2(.data$children, .data$scale, rescale_descendants),
       scale = NULL,
