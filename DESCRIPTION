@@ -11,18 +11,21 @@ Suggests:
     ggtree,
     testthat
 Imports:
-  ape,
-  dplyr,
-  ggplot2 (> 3.1.0),
-  igraph,
-  magrittr,
-  purrr,
-  rlang,
-  stringr,
-  tibble,
-  tidyr,
-  tidytree (>= 0.2.0)
+    ape,
+    dplyr,
+    ggplot2 (> 3.1.0),
+    igraph,
+    magrittr,
+    purrr,
+    rlang,
+    stringr,
+    tibble,
+    tidyr,
+    tidytree (>= 0.2.0),
+    Rcpp (>= 1.0.0)
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
+LinkingTo: Rcpp
+SystemRequirements: C++14

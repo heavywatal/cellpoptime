@@ -78,7 +78,7 @@ nest_tippairs = function(x, detector) {
       isTip = .data$isTip | .data$node %in% nested$parent,
       weight = pmax(.data$weight, .data$weight.y, na.rm = TRUE),
       term_length = pmax(.data$term_length, .data$term_length.y, na.rm = TRUE),
-      children = ifelse(.is_null(.data$children), .data$children.y, .data$children),
+      children = ifelse(apply_is_null(.data$children), .data$children.y, .data$children),
       weight.y = NULL, term_length.y = NULL, children.y = NULL
     )
 }
@@ -102,7 +102,7 @@ flatten_tbl_tree = function(x) {
 }
 
 unnest_children = function(x) {
-  has_children = !.is_null(x$children)
+  has_children = !apply_is_null(x$children)
   if (any(has_children)) {
     unnested = tidyr::unnest(tibble::tibble(
       parent = x$node[has_children],
@@ -114,8 +114,4 @@ unnest_children = function(x) {
     x$children = NULL
     x
   }
-}
-
-.is_null = function(x) {
-  vapply(x, is.null, FALSE, USE.NAMES = FALSE)
 }
