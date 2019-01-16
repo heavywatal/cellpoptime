@@ -8,8 +8,9 @@
 #' @export
 scale_branches = function(x, detector = detect_driver_pois) {
   x = add_extra_columns(x)
+  threshold = 0.05 / (nrow(x) - 1)
   while (nrow(x) > 1L) {
-    x = nest_tippairs(x, detector = detector)
+    x = nest_tippairs(x, detector = detector, threshold = threshold)
   }
   flatten_tbl_tree(x)
 }
@@ -43,7 +44,7 @@ add_extra_columns = function(x) {
     as_tbl_tree()
 }
 
-filter_scale_tips = function(x, detector, threshold = 0.01) {
+filter_scale_tips = function(x, detector, threshold) {
   n = dplyr::n
   x %>%
     dplyr::filter(.data$isTip) %>%
@@ -67,8 +68,8 @@ filter_scale_tips = function(x, detector, threshold = 0.01) {
     )
 }
 
-nest_tippairs = function(x, detector) {
-  nested = filter_scale_tips(x, detector = detector) %>%
+nest_tippairs = function(x, detector, threshold) {
+  nested = filter_scale_tips(x, detector = detector, threshold = threshold) %>%
     dplyr::group_by(.data$parent, .data$weight, .data$term_length) %>%
     tidyr::nest(.key = "children")
   x %>%
