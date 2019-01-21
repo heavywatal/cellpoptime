@@ -99,6 +99,7 @@ flatten_tbl_tree = function(x) {
   x %>%
     unnest_children() %>%
     dplyr::arrange(.data$node) %>%
+    dplyr::mutate(isTip = !(.data$node %in% .data$parent)) %>%
     as_tbl_tree()
 }
 
