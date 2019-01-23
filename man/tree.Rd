@@ -14,7 +14,7 @@ as_phylo(x)
 
 as_multiphylo(tbls)
 
-group_clade(x, node)
+group_clade(x, nodes)
 
 upstream_corner(x, node)
 }
@@ -23,7 +23,9 @@ upstream_corner(x, node)
 
 \item{tbls}{list of tbl_tree}
 
-\item{node}{ancestral node}
+\item{nodes}{integer IDs of ancestral nodes}
+
+\item{node}{integer ID}
 }
 \description{
 Functions to process tidytree objects
@@ -35,7 +37,7 @@ Functions to process tidytree objects
 
 \code{as_multiphylo} adds class name.
 
-\code{group_clade} is a shortcut to apply \code{tidytree::groupClade} to data.frame.
+\code{group_clade} is a simplified version of \code{tidytree::groupClade}.
 
 \code{upstream_corner} finds the joint between a node and its parent
 }

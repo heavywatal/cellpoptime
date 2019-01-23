@@ -30,16 +30,22 @@ as_multiphylo = function(tbls) {
 }
 
 #' @details
-#' `group_clade` is a shortcut to apply `tidytree::groupClade` to data.frame.
-#' @param node ancestral node
+#' `group_clade` is a simplified version of `tidytree::groupClade`.
+#' @param nodes integer IDs of ancestral nodes
 #' @rdname tree
 #' @export
-group_clade = function(x, node) {
-  tidytree::groupClade(as_tbl_tree(x), node)
+group_clade = function(x, nodes) {
+  x$group = NA_integer_
+  for (i in seq_along(nodes)) {
+    x$group[is_clade(x, nodes[i])] = i
+  }
+  x$group = as.factor(x$group)
+  x
 }
 
 #' @details
 #' `upstream_corner` finds the joint between a node and its parent
+#' @param node integer ID
 #' @rdname tree
 #' @export
 upstream_corner = function(x, node) {
