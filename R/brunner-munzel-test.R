@@ -1,7 +1,17 @@
-# Copied from lawstat package on 2019-01-23
-# https://github.com/vlyubchich/lawstat/blob/master/lawstat/R/brunner.munzel.test.R
-# Cleaned by @heavywatal
-brunner.munzel.test = function(x, y, alternative = c("two.sided", "greater", "less"), alpha = 0.05) {
+#' Brunner-Munzel Test
+#'
+#' The original code was copied from lawstat v3.2 on 2019-01-23.
+#' @source <https://github.com/vlyubchich/lawstat>
+#' @inheritParams stats::t.test
+#' @seealso `stats::t.test`, `stats::wilcox.test`
+#' @rdname brunner-munzel-test
+#' @export
+brunner.munzel.test = function(...) UseMethod("brunner.munzel.test")
+
+#' @rdname brunner-munzel-test
+brunner.munzel.test.default = function(x, y,
+                                       alternative = c("two.sided", "greater", "less"),
+                                       conf.level = 0.95, ...) {
   alternative = match.arg(alternative)
   data.name = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
   x = stats::na.omit(x)
@@ -23,9 +33,9 @@ brunner.munzel.test = function(x, y, alternative = c("two.sided", "greater", "le
     less = stats::pt(statistic, df, lower.tail = FALSE)
   )
   estimate = (m2 - (n2 + 1) / 2) / n1
-  conf_half = stats::qt(1 - alpha / 2, df) * sqrt(v1 / (n1 * n2^2) + v2 / (n2 * n1^2))
+  conf_half = stats::qt(0.5 + 0.5 * conf.level, df) * sqrt(v1 / (n1 * n2^2) + v2 / (n2 * n1^2))
   conf.int = estimate + c(-conf_half, conf_half)
-  attr(conf.int, "conf.level") = (1 - alpha)
+  attr(conf.int, "conf.level") = conf.level
   structure(list(
     statistic = stats::setNames(statistic, "Brunner-Munzel Test Statistic"),
     parameter = stats::setNames(df, "df"),
@@ -35,4 +45,16 @@ brunner.munzel.test = function(x, y, alternative = c("two.sided", "greater", "le
     method = "Brunner-Munzel Test",
     data.name = data.name
   ), class = "htest")
+}
+
+#' @rdname brunner-munzel-test
+brunner.munzel.test.formula = function(formula, data, ...) {
+  mf = stats::model.frame(formula, data = data)
+  response = attr(attr(mf, "terms"), "response")
+  group = factor(mf[[-response]])
+  stopifnot(nlevels(group) == 2L)
+  data = stats::setNames(split(mf[[response]], group), c("x", "y"))
+  result = do.call("brunner.munzel.test", c(data, list(...)))
+  result$data.name = paste(names(mf), collapse = " by ")
+  result
 }
