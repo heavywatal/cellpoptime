@@ -4,12 +4,12 @@
 #' @source <https://github.com/vlyubchich/lawstat>
 #' @inheritParams stats::t.test
 #' @seealso `stats::t.test`, `stats::wilcox.test`
-#' @rdname brunner-munzel-test
+#' @rdname brunner_munzel_test
 #' @export
-brunner.munzel.test = function(...) UseMethod("brunner.munzel.test")
+brunner_munzel_test = function(...) UseMethod("brunner_munzel_test")
 
-#' @rdname brunner-munzel-test
-brunner.munzel.test.default = function(x, y,
+#' @rdname brunner_munzel_test
+brunner_munzel_test.default = function(x, y,
                                        alternative = c("two.sided", "greater", "less"),
                                        conf.level = 0.95, ...) {
   alternative = match.arg(alternative)
@@ -47,14 +47,14 @@ brunner.munzel.test.default = function(x, y,
   ), class = "htest")
 }
 
-#' @rdname brunner-munzel-test
-brunner.munzel.test.formula = function(formula, data, ...) {
+#' @rdname brunner_munzel_test
+brunner_munzel_test.formula = function(formula, data, ...) {
   mf = stats::model.frame(formula, data = data)
   response = attr(attr(mf, "terms"), "response")
   group = factor(mf[[-response]])
   stopifnot(nlevels(group) == 2L)
   data = stats::setNames(split(mf[[response]], group), c("x", "y"))
-  result = do.call("brunner.munzel.test", c(data, list(...)))
+  result = do.call("brunner_munzel_test", c(data, list(...)))
   result$data.name = paste(names(mf), collapse = " by ")
   result
 }
