@@ -5,13 +5,13 @@
 #' @rdname filter
 #' @export
 filter_root = function(.data) {
-  .data[.data$parent == .data$node,]
+  .data[.data$parent == .data$node, ]
 }
 
 #' @rdname filter
 #' @export
 filter_children = function(.data, node) {
-  .data[.data$parent == node & .data$node != node,]
+  .data[.data$parent == node & .data$node != node, ]
 }
 
 #' @details
@@ -20,13 +20,13 @@ filter_children = function(.data, node) {
 #' @rdname filter
 #' @export
 filter_offspring = function(.data, node) {
-  .data[is_offstring(.data, node),]
+  .data[is_offstring(.data, node), ]
 }
 
 #' @rdname filter
 #' @export
 filter_clade = function(.data, node) {
-  .data[is_clade(.data, node),]
+  .data[is_clade(.data, node), ]
 }
 
 is_offstring = function(.data, node) {

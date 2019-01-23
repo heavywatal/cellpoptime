@@ -73,7 +73,7 @@ get_x_coord = function(data) {
 
 # More efficient than ggtree::getYcoord for >2000 tips
 get_y_coord = function(data, ladderize = TRUE, step = 1) {
-  n = dplyr::n  # for speed and warning
+  n = dplyr::n # for speed and warning
   if (ladderize) data = .ladderize(data)
   data = data[, c("parent", "node")]
   num_tips = NROW(data) - sum(data$node %in% data$parent)
