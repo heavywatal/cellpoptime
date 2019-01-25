@@ -8,6 +8,7 @@
 permutation_test = function(...) UseMethod("permutation_test")
 
 #' @rdname permutation_test
+#' @export
 permutation_test.default = function(x, y, n = 1000L, alternative = c("two.sided", "greater", "less")) {
   alternative = match.arg(alternative)
   data.name = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
@@ -40,6 +41,7 @@ permutation_test.default = function(x, y, n = 1000L, alternative = c("two.sided"
 }
 
 #' @rdname permutation_test
+#' @export
 permutation_test.formula = function(formula, data, ...) {
   mf = stats::model.frame(formula, data = data)
   response = attr(attr(mf, "terms"), "response")

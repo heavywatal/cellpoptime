@@ -9,6 +9,7 @@
 brunner_munzel_test = function(...) UseMethod("brunner_munzel_test")
 
 #' @rdname brunner_munzel_test
+#' @export
 brunner_munzel_test.default = function(x, y,
                                        alternative = c("two.sided", "greater", "less"),
                                        conf.level = 0.95, ...) {
@@ -48,6 +49,7 @@ brunner_munzel_test.default = function(x, y,
 }
 
 #' @rdname brunner_munzel_test
+#' @export
 brunner_munzel_test.formula = function(formula, data, ...) {
   mf = stats::model.frame(formula, data = data)
   response = attr(attr(mf, "terms"), "response")
