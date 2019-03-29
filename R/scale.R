@@ -21,9 +21,10 @@ scale_branches = function(x, detector = detect_driver_pois) {
 #' @export
 scale_branches_record = function(x, detector = detect_driver_pois) {
   x = add_extra_columns(x)
+  threshold = 0.05 / (nrow(x) - 1)
   l = list(x)
   while (nrow(x) > 1L) {
-    x = nest_tippairs(x, detector = detector)
+    x = nest_tippairs(x, detector = detector, threshold = threshold)
     l[[length(l) + 1L]] = x
   }
   purrr::map(l, flatten_tbl_tree)
