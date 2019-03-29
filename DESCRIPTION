@@ -7,14 +7,10 @@ Depends: R (>= 3.4.0)
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests:
-    ggtree,
-    testthat
 Imports:
     ape,
     dplyr,
     ggplot2 (> 3.1.0),
-    igraph,
     magrittr,
     purrr,
     rlang,
@@ -23,6 +19,9 @@ Imports:
     tidyr,
     tidytree (>= 0.2.0),
     Rcpp (>= 1.0.0)
+Suggests:
+    ggtree,
+    testthat
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
 RoxygenNote: 6.1.1
