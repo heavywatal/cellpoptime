@@ -9,7 +9,7 @@ permutation_test = function(...) UseMethod("permutation_test")
 
 #' @rdname permutation_test
 #' @export
-permutation_test.default = function(x, y, n = 1000L, alternative = c("two.sided", "greater", "less")) {
+permutation_test.default = function(x, y, n = 1000L, alternative = c("two.sided", "greater", "less"), ...) {
   alternative = match.arg(alternative)
   data.name = paste(deparse(substitute(x)), "and", deparse(substitute(y)))
   statistic = mean(x) - mean(y)
@@ -79,17 +79,18 @@ permutation_test.formula = function(formula, data, ...) {
 combinations = function(n, r) {
   v = seq_len(n)
   subfun = function(n, r, v) {
-    if (r == 0L)
+    if (r == 0L) {
       integer(0L)
-    else if (r == 1L)
+    } else if (r == 1L) {
       matrix(v, n, 1L)
-    else if (r == n)
+    } else if (r == n) {
       matrix(v, 1L, n)
-    else
+    } else {
       rbind(
         cbind(v[1L], Recall(n - 1L, r - 1L, v[-1L])),
         Recall(n - 1L, r, v[-1L])
       )
+    }
   }
   subfun(n, r, v)
 }

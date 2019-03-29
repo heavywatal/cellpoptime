@@ -9,7 +9,7 @@
 permutation_test(...)
 
 \method{permutation_test}{default}(x, y, n = 1000L,
-  alternative = c("two.sided", "greater", "less"))
+  alternative = c("two.sided", "greater", "less"), ...)
 
 \method{permutation_test}{formula}(formula, data, ...)
 }
