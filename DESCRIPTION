@@ -3,28 +3,28 @@ Title: Analyze and visualize phylogenetic tree of cell population
 Version: 0.0.0.9000
 Authors@R: person("Watal M.", "Iwasaki", email = "heavy.watal@gmail.com", role = c("aut", "cre"), comment = c(ORCID="0000-0002-4718-7605"))
 Description: Analyze and visualize phylogenetic tree of cell population.
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.6.0)
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    ape (>= 5.3),
-    dplyr (>= 0.8.3),
-    ggplot2 (>= 3.2.0),
+    ape (>= 5.4),
+    dplyr (>= 1.0.0),
+    ggplot2 (>= 3.3.2),
     magrittr (>= 1.5),
-    purrr (>= 0.3.2),
-    rlang (>= 0.4.0),
+    purrr (>= 0.3.4),
+    rlang (>= 0.4.7),
     stringr (>= 1.4.0),
-    tibble (>= 2.1.3),
-    tidyr (>= 0.8.3),
-    tidytree (>= 0.2.0),
-    Rcpp (>= 1.0.2)
+    tibble (>= 3.0.3),
+    tidyr (>= 1.1.0),
+    tidytree (>= 0.3.3),
+    Rcpp (>= 1.0.5)
 Suggests:
     ggtree,
     testthat
 URL: https://github.com/heavywatal/cellpoptime
 BugReports: https://github.com/heavywatal/cellpoptime/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 LinkingTo: Rcpp
 SystemRequirements: C++14

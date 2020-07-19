@@ -110,7 +110,7 @@ unnest_children = function(x) {
     unnested = tidyr::unnest(tibble::tibble(
       parent = x$node[has_children],
       data = x$children[has_children]
-    ))
+    ), "data")
     x$children = NULL
     dplyr::bind_rows(unnest_children(unnested), x)
   } else {

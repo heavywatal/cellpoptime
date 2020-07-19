@@ -11,8 +11,13 @@
 \usage{
 brunner_munzel_test(...)
 
-\method{brunner_munzel_test}{default}(x, y, alternative = c("two.sided",
-  "greater", "less"), conf.level = 0.95, ...)
+\method{brunner_munzel_test}{default}(
+  x,
+  y,
+  alternative = c("two.sided", "greater", "less"),
+  conf.level = 0.95,
+  ...
+)
 
 \method{brunner_munzel_test}{formula}(formula, data, ...)
 }
@@ -31,11 +36,13 @@ brunner_munzel_test(...)
 \item{conf.level}{confidence level of the interval.}
 
 \item{formula}{a formula of the form \code{lhs ~ rhs} where \code{lhs}
-    is a numeric variable giving the data values and \code{rhs} a factor
-    with two levels giving the corresponding groups.}
+    is a numeric variable giving the data values and \code{rhs} either 
+    \code{1} for a one-sample or paired test or a factor
+    with two levels giving the corresponding groups. If \code{lhs} is of 
+    class \code{"Pair"} and \code{rhs} is \code{1}, a paired test is done}
 
 \item{data}{an optional matrix or data frame (or similar: see
-    \code{\link{model.frame}}) containing the variables in the
+    \code{\link[stats]{model.frame}}) containing the variables in the
     formula \code{formula}.  By default the variables are taken from
     \code{environment(formula)}.}
 }
